@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: docker.io/bitnami/mariadb:10.6
+    environment:
+      - MARIADB_ROOT_PASSWORD=root_password
+      - MARIADB_USER=mariadb_user
+      - MARIADB_PASSWORD=mariadb_password
+      - MARIADB_DATABASE=webapp_db
+#     volumes:
+#       - ./docker:/docker-entrypoint-initdb.d
+
+  webapp:
+    image: docker.io/bitnami/codeigniter:4
+    ports:
+      - '8000:8000'
+    environment:
+      - CODEIGNITER_DATABASE_HOST=mariadb
+      - CODEIGNITER_DATABASE_PORT_NUMBER=3306
+      - CODEIGNITER_DATABASE_USER=mariadb_user
+      - CODEIGNITER_DATABASE_PASSWORD=mariadb_password
+      - CODEIGNITER_DATABASE_NAME=webapp_db
+    volumes:
+      - './app:/app'
+    depends_on:
+      - mariadb
+
