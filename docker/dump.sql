@@ -19,5 +19,5 @@ CREATE TABLE `forms` (
   `form_blob` TEXT NOT NULL,
   PRIMARY KEY (`form_id`),
   FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`),
-  FOREIGN KEY (`form_style_id`) REFERENCES `form_styles`(`form_style_id`),
+  FOREIGN KEY (`form_style_id`) REFERENCES `form_styles`(`form_style_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
