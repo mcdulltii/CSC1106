@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class FormTable extends Migration
+class FormStyleTable extends Migration
 {
     public function up()
     {
@@ -14,11 +14,11 @@ class FormTable extends Migration
           'form_css' => ['type' => 'TEXT'],
       ]);
       $this->forge->addKey('form_style_id', true);
-      $this->forge->createTable('form_styles');
+      $this->forge->createTable('form_style');
     }
 
     public function down()
     {
-      $this->forge->dropTable('form_styles');
+      $this->forge->dropTable('form_style');
     }
 }
