@@ -10,15 +10,15 @@ class UserTable extends Migration
     {
       $this->forge->addField([
           'user_id' => ['type' => 'INT', 'constraint' => 5, 'unsigned' => true, 'auto_increment' => true],
-          'username' => ['type' => 'VARCHAR', 'constraint' => 255],
-          'password' => ['type' => 'VARCHAR', 'constraint' => 255],
+          'user_name' => ['type' => 'VARCHAR', 'constraint' => 255],
+          'user_password_hash' => ['type' => 'VARCHAR', 'constraint' => 255],
       ]);
       $this->forge->addKey('user_id', true);
-      $this->forge->createTable('users');
+      $this->forge->createTable('user');
     }
 
     public function down()
     {
-      $this->forge->dropTable('users');
+      $this->forge->dropTable('user');
     }
 }

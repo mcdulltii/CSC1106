@@ -17,7 +17,7 @@ class FormTable extends Migration
 
     $user_fields = [
         'user_id' => ['type' => 'INT', 'constraint' => 5, 'unsigned' => TRUE],
-        'FOREIGN KEY(`user_id`) REFERENCES `users`(`user_id`)'
+        'FOREIGN KEY(`user_id`) REFERENCES `user`(`user_id`)'
     ];
     $this->forge->addColumn('form', $user_fields);
 
