@@ -2,6 +2,12 @@
 
 namespace Config;
 
+use App\Controllers\FormController;
+use App\Controllers\FormGeneratorController;
+use App\Controllers\Home;
+use App\Controllers\UserController;
+use App\Controllers\BaseController;
+
 // Create a new instance of our RouteCollection class.
 $routes = Services::routes();
 
@@ -29,7 +35,11 @@ $routes->set404Override();
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
+
+//yt notes: Please change the routing once the db and formbuilder has been added
 $routes->get('/', 'Home::index');
+$routes->get('form/create', [FormController::class, 'goto_create']);
+$routes->get('form/edit', [FormController::class, 'goto_details']);
 
 /*
  * --------------------------------------------------------------------
