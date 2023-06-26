@@ -43,4 +43,14 @@ class FormModel extends Model
     {
         return $this->findAll();
     }
+    
+    public function getForm($form_id)
+    {
+        return $this->where(['form_id' => $form_id])->first();
+    }
+
+    public function updateForm($form_id, $data)
+    {
+        return $this->where(['form_id' => $form_id])->set($data)->update();
+    }
 }
