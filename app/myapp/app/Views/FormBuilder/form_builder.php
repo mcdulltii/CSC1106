@@ -41,6 +41,7 @@
 
                     console.log(form);
 
+                    // Send the form data to the server
                     fetch('/form-builder/save-form', {
                         method: 'POST',
                         headers: {
@@ -51,27 +52,40 @@
                     })
                     .then(response => {
                         console.log(response);
-                        alert('Form saved successfully');
-                        location.href = '<?php echo base_url('/');?>';
+
+                        if(response.ok){
+                            alert('Form saved successfully');
+                            location.href = '<?php echo base_url('/');?>';
+                        }
+                        else{
+                            alert('There was an error saving the form');
+                        }
                     })
-                    .catch(error => console.log(error));
+                    .catch(error => {
+                        console.log(error);
+                        alert('There was an error saving the form');
+                    });
                 }
             }
         }
 
+        // If the form variable is set, we are editing an existing form
+        // Else, we are creating a new form
         if(<?php echo isset($form) ? 'true' : 'false' ?>){
+            // Parse the form variable into a JSON object
             formData = JSON.parse(<?= json_encode($form, JSON_UNESCAPED_UNICODE); ?>);
+            // Create a new formeo editor instance with the form data
             var formeo = new FormeoEditor({
                 editorContainer: '#formeo-editor',
                 events: {onSave: onSave},
             }, formData['formData']);
         }
         else {
+            // Create a new formeo editor instance
             var formeo = new FormeoEditor({
                 editorContainer: '#formeo-editor',
                 events: {onSave: onSave},
             });
-
         }
     </script>
 
