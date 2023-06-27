@@ -13,7 +13,7 @@ class FormModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['form_id', 'form_blob', 'user_id', 'form_style_id'];
+    protected $allowedFields    = ['form_id', 'form_blob', 'user_id'];
 
     // Dates
     protected $useTimestamps = false;
