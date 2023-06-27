@@ -31,41 +31,36 @@
             if (confirm('Are you sure you want to save this form?')){
                 console.log(formData);
 
-                var formName = prompt('Please enter a name for this form');
+                var form = JSON.stringify({
+                    'formData': JSON.stringify(formData),
+                });
 
-                if (formName){
-                    var form = JSON.stringify({
-                        'formName': formName,
-                        'formData': JSON.stringify(formData),
-                    });
+                console.log(form);
 
-                    console.log(form);
+                // Send the form data to the server
+                fetch('/form-builder/save-form', {
+                    method: 'POST',
+                    headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                    body: form
+                })
+                .then(response => {
+                    console.log(response);
 
-                    // Send the form data to the server
-                    fetch('/form-builder/save-form', {
-                        method: 'POST',
-                        headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                            },
-                        body: form
-                    })
-                    .then(response => {
-                        console.log(response);
-
-                        if(response.ok){
-                            alert('Form saved successfully');
-                            location.href = '<?php echo base_url('/');?>';
-                        }
-                        else{
-                            alert('There was an error saving the form');
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error);
+                    if(response.ok){
+                        alert('Form saved successfully');
+                        location.href = '<?php echo base_url('/');?>';
+                    }
+                    else{
                         alert('There was an error saving the form');
-                    });
-                }
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert('There was an error saving the form');
+                });
             }
         }
 
