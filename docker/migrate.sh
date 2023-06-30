@@ -1,0 +1,1 @@
+docker exec --workdir=/app/myapp csc1106-webapp-1 php spark migrate
