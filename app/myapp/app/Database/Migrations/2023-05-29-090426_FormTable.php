@@ -10,7 +10,7 @@ class FormTable extends Migration
   {
     $this->forge->addField([
         'form_id' => ['type' => 'INT', 'constraint' => 5, 'unsigned' => true, 'auto_increment' => true],
-        'form_blob' => ['type' => 'TEXT'],
+        'form_blob' => ['type' => 'BLOB'],
     ]);
     $this->forge->addKey('form_id', true);
     $this->forge->createTable('form');

@@ -6,8 +6,12 @@ use App\Controllers\BaseController;
 
 class FormBuilder extends BaseController
 {
+    private $encrypter;
+
     public function __construct()
     {
+        $this->encrypter = \Config\Services::encrypter();
+
         $session = \Config\Services::session();
         // Set the user ID to 1 for now
         $session->set('user_id', 1);
@@ -29,16 +33,19 @@ class FormBuilder extends BaseController
 
         $formModel = model(FormModel::class);
 
+        $encrypted_data = $this->encrypter->encrypt($jsonPayload->formData);
+        $compressed_data = gzencode($encrypted_data, 9);
+
         try {
             // If the form has an ID, update it, otherwise create a new one
             if ($id) {
                 $formModel->updateForm($id, [
-                    'form_blob' => $jsonPayload->formData
+                    'form_blob' => $compressed_data
                 ]);
             }
-            else{
+            else {
                 $formModel->save([
-                    'form_blob' => $jsonPayload->formData,
+                    'form_blob' => $compressed_data,
                     'user_id' => $_SESSION['user_id'],
                 ]);
             }
@@ -56,9 +63,12 @@ class FormBuilder extends BaseController
         // Get the form from the database
         $formModel = model(FormModel::class);
         $form = $formModel->getForm($id);
-        
+
+        $uncompressed_data = gzdecode($form['form_blob']);
+        $decrypted_data = $this->encrypter->decrypt($uncompressed_data);
+
         $data = [
-            'form' => $form['form_blob'],
+            'form' => $decrypted_data,
         ];
 
         return view('FormBuilder/form_builder', $data);

@@ -3,16 +3,18 @@ version: '3.8'
 services:
   mariadb:
     image: docker.io/bitnami/mariadb:10.6
+    container_name: csc1106_mariadb
     environment:
       - MARIADB_ROOT_PASSWORD=root_password
       - MARIADB_USER=mariadb_user
       - MARIADB_PASSWORD=mariadb_password
       - MARIADB_DATABASE=webapp_db
 #     volumes:
-#       - ./docker:/docker-entrypoint-initdb.d
+#       - ./docker/mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql:ro
 
   webapp:
     image: docker.io/bitnami/codeigniter:4
+    container_name: csc1106_webapp
     ports:
       - '8000:8000'
     environment:
