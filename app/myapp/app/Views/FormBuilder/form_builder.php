@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, height=device-height">
-        <base href="http://localhost:8000" />
+        <base href="<?php echo base_url()?>" />
 
         <script src="https://draggable.github.io/formeo/assets/js/formeo.min.js"></script>
         <link rel="stylesheet" href="https://draggable.github.io/formeo/assets/css/formeo.min.css">
