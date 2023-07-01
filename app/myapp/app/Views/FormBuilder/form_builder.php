@@ -68,7 +68,8 @@
                         
                         // Redirect to home if we are creating a new form
                         if(<?php echo !isset($form) ? 'true' : 'false' ?>){
-                        location.href = '<?php echo base_url('/');?>';
+                            location.href = '<?php echo base_url('/');?>';
+                        }
                     }
                     else{
                         createAlert('Opps!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
