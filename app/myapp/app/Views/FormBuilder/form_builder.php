@@ -1,8 +1,21 @@
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, height=device-height">
+        <base href="http://localhost:8000" />
+
         <script src="https://draggable.github.io/formeo/assets/js/formeo.min.js"></script>
         <link rel="stylesheet" href="https://draggable.github.io/formeo/assets/css/formeo.min.css">
-
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        
+        <link href="css/styles.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.3/animate.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        
+        <script src="js/createAlert.js"></script>
+        <link rel="stylesheet" href="css/alert.css">
+        
         <style>
             body {
                 background: radial-gradient(circle, #484848, #2F3031);
@@ -24,6 +37,7 @@
 
     <body>
         <div id='formeo-editor'></div>   
+        <div id='pageMessages'>
     </body>
 
     <script type="text/javascript">
@@ -50,16 +64,16 @@
                     console.log(response);
 
                     if(response.ok){
-                        alert('Form saved successfully');
+                        createAlert('','Form saved successfully','','success',true,true,'pageMessages');
                         location.href = '<?php echo base_url('/');?>';
                     }
                     else{
-                        alert('There was an error saving the form');
+                        createAlert('Opps!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
                     }
                 })
                 .catch(error => {
                     console.log(error);
-                    alert('There was an error saving the form');
+                    createAlert('Opps!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
                 });
             }
         }
