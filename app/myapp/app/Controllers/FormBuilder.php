@@ -71,6 +71,8 @@ class FormBuilder extends BaseController
             'form' => $decrypted_data,
         ];
 
-        return view('FormBuilder/form_builder', $data);
+        return view('templates/header')
+        .view('FormBuilder/form_builder', $data)
+        .view('templates/footer');
     }
 }
