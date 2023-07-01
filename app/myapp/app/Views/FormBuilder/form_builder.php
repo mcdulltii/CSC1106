@@ -65,6 +65,9 @@
 
                     if(response.ok){
                         createAlert('','Form saved successfully','','success',true,true,'pageMessages');
+                        
+                        // Redirect to home if we are creating a new form
+                        if(<?php echo !isset($form) ? 'true' : 'false' ?>){
                         location.href = '<?php echo base_url('/');?>';
                     }
                     else{
