@@ -10,7 +10,7 @@ class FormBuilder extends BaseController
 
     public function __construct()
     {
-        $encrypter = \Config\Services::encrypter();
+        $this->encrypter = \Config\Services::encrypter();
 
         $session = \Config\Services::session();
         // Set the user ID to 1 for now
@@ -33,7 +33,7 @@ class FormBuilder extends BaseController
 
         $formModel = model(FormModel::class);
 
-        $encrypted_data = $encrypter->encrypt($jsonPayload->formData);
+        $encrypted_data = $this->encrypter->encrypt($jsonPayload->formData);
         $compressed_data = gzcompress($encrypted_data, 9);
 
         try {
@@ -43,7 +43,7 @@ class FormBuilder extends BaseController
                     'form_blob' => $compressed_data
                 ]);
             }
-            else{
+            else {
                 $formModel->save([
                     'form_blob' => $compressed_data,
                     'user_id' => $_SESSION['user_id'],
@@ -65,7 +65,7 @@ class FormBuilder extends BaseController
         $form = $formModel->getForm($id);
 
         $uncompressed_data = gzuncompress($form['form_blob']);
-        $decrypted_data = $encrypter->decrypt($uncompressed_data);
+        $decrypted_data = $this->encrypter->decrypt($uncompressed_data);
 
         $data = [
             'form' => $decrypted_data,
