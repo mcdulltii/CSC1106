@@ -37,7 +37,7 @@
 
     <body>
         <div id='formeo-editor'></div>   
-        <div id='pageMessages'>
+        <div id='pageMessages'></div>
     </body>
 
     <script type="text/javascript">
