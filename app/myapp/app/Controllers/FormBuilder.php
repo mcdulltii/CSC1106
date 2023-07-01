@@ -34,7 +34,7 @@ class FormBuilder extends BaseController
         $formModel = model(FormModel::class);
 
         $encrypted_data = $this->encrypter->encrypt($jsonPayload->formData);
-        $compressed_data = gzcompress($encrypted_data, 9);
+        $compressed_data = gzencode($encrypted_data, 9);
 
         try {
             // If the form has an ID, update it, otherwise create a new one
@@ -64,7 +64,7 @@ class FormBuilder extends BaseController
         $formModel = model(FormModel::class);
         $form = $formModel->getForm($id);
 
-        $uncompressed_data = gzuncompress($form['form_blob']);
+        $uncompressed_data = gzdecode($form['form_blob']);
         $decrypted_data = $this->encrypter->decrypt($uncompressed_data);
 
         $data = [
