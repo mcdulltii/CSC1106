@@ -13,7 +13,7 @@ class FormModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['form_id', 'form_blob', 'user_id', 'form_style_id'];
+    protected $allowedFields    = ['form_id', 'form_blob', 'user_id'];
 
     // Dates
     protected $useTimestamps = false;
@@ -42,5 +42,15 @@ class FormModel extends Model
     public function getForms()
     {
         return $this->findAll();
+    }
+    
+    public function getForm($form_id)
+    {
+        return $this->where(['form_id' => $form_id])->first();
+    }
+
+    public function updateForm($form_id, $data)
+    {
+        return $this->where(['form_id' => $form_id])->set($data)->update();
     }
 }
