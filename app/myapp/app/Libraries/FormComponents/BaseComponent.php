@@ -1,6 +1,8 @@
 <?php
 
-abstract class FormComponent {
+namespace App\Libraries\FormComponents;
+
+abstract class BaseComponent {
     protected $attributes;
     protected $validationRules;
 
@@ -10,9 +12,9 @@ abstract class FormComponent {
         // $this->validationRules = array();
     }
 
-    function setAttribute($attr)
+    function setAttribute($attr, $value)
     {
-        $this->attributes = $attr;
+        $this->attributes[$attr] = $value;
     }
 
     function getAttribute()
