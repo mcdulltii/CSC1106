@@ -43,7 +43,6 @@ $routes->get('/', 'Home::index');
 $routes->get('form/create', [FormBuilder::class, 'index']);
 $routes->get('form/edit/(:any)', [FormBuilder::class, 'editForm']);
 $routes->post('form/save', 'FormBuilder::saveForm');
-$routes->post('form-builder/save-form', 'FormBuilder::saveForm');
 
 $routes->get('form-components/(:any)', [[FormComponent::class, 'index'], '$1']);
 
