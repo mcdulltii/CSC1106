@@ -2,46 +2,51 @@
 
 namespace App\Controllers;
 
+use CodeIgniter\API\ResponseTrait;
+
 use App\Libraries\FormComponents\FormInput;
 use App\Libraries\FormComponents\FormTextarea;
 
 class FormComponent extends BaseController
 {
-    public function index()
+    use ResponseTrait;
+
+    public function index($tag, $type = '')
     {
-        helper('form');
-
-        $data = array();
-
-        if ($this->request->is('post')) {
-            $post = $this->request->getPost([
-                'input_type',
-                'label',
-                'value',
-                'row',
-                'col',
-            ]);
-
-            switch ($post['input_type'])
-            {
-                case "textarea":
-                    $component = new FormTextarea();
-                    $additionalAttr = $this->request->getPost([
-                        'rows',
-                        'cols',
-                    ]);
-                    $data['component'] = $component->render($post, $additionalAttr);
-                    break;
-                default: // input case
-                    $component = new FormInput();
-                    if ($component->supported($post['input_type']))
-                        $data['component'] = $component->render($post);
-                    break;
-            }
-
-            return view('form/index', $data);
+        switch($tag)
+        {
+            case "input":
+                $component = new FormInput();
+                
+                if ($component->check_supported($type))
+                {
+                    $data = $component->render($type);
+                }
+                else
+                {
+                    return $this->setResponseFormat('json')
+                                ->fail('Input type is not supported');
+                }
+                break;
+            case "textarea":
+                $component = new FormTextarea();
+                $data = $component->render($tag);
+                break;
+            default:
+                return $this->setResponseFormat('json')
+                             ->fail('Input type is not supported');
         }
 
-        return view('form/index');
+        return $this->setResponseFormat('json')
+                    ->respond(
+                        $data,
+                        200,
+                        'Successfully rendered'
+                    );
+    }
+
+    public function view()
+    {
+        return view("form/index");
     }
 }

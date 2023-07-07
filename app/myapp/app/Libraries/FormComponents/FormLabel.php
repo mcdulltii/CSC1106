@@ -4,26 +4,20 @@ namespace App\Libraries\FormComponents;
 
 class FormLabel extends BaseComponent
 {
-    public static $count = 0;
-    protected $for_attr;
-    protected $title;
-
-    function __construct($for_attr, $title)
+    function __construct()
     {
         parent::__construct();
-        $this->for_attr = $for_attr;
-        $this->title = $title;
     }
 
-    function render()
+    function render($form_name = '')
     {
-        $html = '<label for="' . $this->for_attr . '"';
+        $html = '<label for="' . $form_name . '"';
 
         foreach ($this->getAttribute() as $name => $value) {
             $html .= ' ' . $name . '="' . $value . '"';
         }
 
-        $html .= '>' . $this->title . '</label>';
+        $html .= '>' . $form_name . '</label>';
         
         return $html;
     }

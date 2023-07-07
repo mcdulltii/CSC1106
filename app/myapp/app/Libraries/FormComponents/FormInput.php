@@ -6,14 +6,15 @@ use App\Libraries\FormComponents\FormLabel;
 
 class FormInput extends BaseComponent
 {
-    public static $count = 0;
+    protected $count;
 
     function __construct()
     {
         parent::__construct();
+        $this->count = session('forminput_count') ?? 0;
     }
 
-    function supported($type)
+    function check_supported($type)
     {
         $types = ["button",
                   "checkbox",
@@ -44,33 +45,31 @@ class FormInput extends BaseComponent
         return 0;     // false
     }
 
-    function render($field = '')
+    function render($type = '')
     {
-        if ($field != '') {
-            $html = array();
+        $html = array();
 
-            $form_name = $field['input_type'] . '_' . $this::$count;
-            $this->setAttribute('id', $form_name);
-            $this->setAttribute('name', $form_name);
-            $this->setAttribute('value', $field['value']);
+        $form_name = $type . '_' . $this->count;
+        $this->setAttribute('id', $form_name);
+        $this->setAttribute('name', $form_name);
+        $this->setAttribute('value', '');
 
-            if (!in_array($field['input_type'], array('submit', 'reset'))) {
-                $label = new FormLabel($form_name, $field['label']);
-                $html['label'] = $label->render();
-            }
-
-            $html['input'] = '<input type="' . $field['input_type'] . '"';
-            foreach ($this->getAttribute() as $name => $value) {
-                $html['input'] .= ' ' . $name . '="' . $value . '"';
-            }
-            $html['input'] .= '>';
-
-            $html['row'] = $field['row'];
-            $html['col'] = $field['col'];
-
-            return $html;
+        if (!in_array($type, array('submit', 'reset'))) {
+            $label = new FormLabel();
+            $html['label'] = $label->render($form_name);
         }
 
-        return 'Render failed';
+        $html['input'] = '<input type="' . $type . '"';
+        foreach ($this->getAttribute() as $name => $value) {
+            $html['input'] .= ' ' . $name . '="' . $value . '"';
+        }
+        $html['input'] .= '>';
+
+        $html['row'] = '';
+        $html['col'] = '';
+
+        session()->set('forminput_count', ++$this->count);
+
+        return $html;
     }
 }

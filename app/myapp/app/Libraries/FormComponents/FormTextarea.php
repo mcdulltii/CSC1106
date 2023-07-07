@@ -4,40 +4,38 @@ namespace App\Libraries\FormComponents;
 
 class FormTextarea extends BaseComponent
 {
-    public static $count = 0;
+    protected $count;
 
     function __construct()
     {
         parent::__construct();
+        $this->count = session('formtextarea_count') ?? 0;
     }
 
-    function render($field = '', $additionalAttr = array())
+    function render($type = '')
     {
-        if ($field != '')
-        {
-            $html = array();
+        $html = array();
+        $label = new FormLabel();
 
-            $form_name = $field['input_type'] . '_' . $this::$count;
-            $this->setAttribute('name', $form_name);
+        $form_name = $type . '_' . $this->count;
+        $this->setAttribute('id', $form_name);
+        $this->setAttribute('name', $form_name);
+        $this->setAttribute('rows', '5');
+        $this->setAttribute('cols', '15');
 
-            foreach ($additionalAttr as $name => $value) {
-                $this->setAttribute($name, $value);
-            }
+        $html['label'] = $label->render($form_name);
 
-            $html['label'] = "<p>" . $field['label'] . "</p>";
-
-            $html['textarea'] = '<textarea ';
-            foreach ($this->getAttribute() as $name => $value) {
-                $html['textarea'] .= ' ' . $name . '="' . $value . '"';
-            }
-            $html['textarea'] .= '>' . $field['value'] . '</textarea>';
-
-            $html['row'] = $field['row'];
-            $html['col'] = $field['col'];
-            
-            return $html;
+        $html['textarea'] = '<textarea ';
+        foreach ($this->getAttribute() as $name => $value) {
+            $html['textarea'] .= ' ' . $name . '="' . $value . '"';
         }
+        $html['textarea'] .= '></textarea>';
 
-        return 'Render failed';
+        $html['row'] = '';
+        $html['col'] = '';
+
+        session()->set('formtextarea_count', ++$this->count);
+
+        return $html;
     }
 }

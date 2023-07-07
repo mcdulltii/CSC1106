@@ -45,7 +45,7 @@ $routes->get('form/edit/(:any)', [FormBuilder::class, 'editForm']);
 $routes->post('form/save', 'FormBuilder::saveForm');
 $routes->post('form-builder/save-form', 'FormBuilder::saveForm');
 
-$routes->match(['get', 'post'], 'form-components', [FormComponent::class, 'index']);
+$routes->get('form-components/(:any)', [[FormComponent::class, 'index'], '$1']);
 
 /*
  * --------------------------------------------------------------------
