@@ -75,7 +75,17 @@
 </html>
 
 <script>
-    // #TODO add form edit functionality
+    // If the form variable is set, we are editing an existing form
+    // Else, do nothing as we are creating a new form
+    if(<?php echo isset($form) ? 'true' : 'false' ?>){
+        // Parse the form variable into a JSON object
+        formData = JSON.parse(<?= json_encode($form, JSON_UNESCAPED_UNICODE); ?>);
+        console.log(formData);
+        // Iterate thtough the json object and add each field to the form
+        for (var i = 0; i < formData.length; i++) {
+            addField(formData[i]);
+        }
+    }
 
     $(document).ready(function () {
 
@@ -231,7 +241,7 @@
                     createAlert('','Form saved successfully','','success',true,true,'pageMessages');
                     
                     // Redirect to home if we are creating a new form
-                    if(<?php echo !isset($formData) ? 'true' : 'false' ?>){
+                    if(<?php echo !isset($form) ? 'true' : 'false' ?>){
                         location.href = '<?php echo base_url('/');?>';
                     }
                 }
