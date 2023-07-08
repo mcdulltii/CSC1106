@@ -1,0 +1,29 @@
+.item3 {
+    grid-area: main;
+}
+
+.item4 {
+    grid-area: right;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-areas:
+        'main main main main right';
+    gap: 10px;
+    background-color: #2196F3;
+    padding: 10px;
+}
+
+.grid-container>div {
+    background-color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    padding: 20px 0;
+    font-size: 20px;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
