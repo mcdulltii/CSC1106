@@ -1,5 +1,5 @@
 <!-- Masthead-->
-<base href="<?php echo base_url()?>" />
+<base href="<?= base_url()?>" />
 <!-- Favicon-->
 <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
 <!-- Font Awesome icons (free version)-->
