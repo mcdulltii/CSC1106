@@ -1,3 +1,6 @@
+<?= $this->extend('layout/bootstrap') ?>
+
+<?= $this->section('body') ?>
 <div class="grid-container" id="form-builder">
     <div id="form-fields" class="item3 container">
         <!-- The form fields will be dynamically added here -->
@@ -34,7 +37,6 @@ if(<?= isset($form) ? 'true' : 'false' ?>){
 }
 
 $(document).ready(function () {
-
     // Add field button click event
     $("#add-field").click(function () {
 
@@ -307,3 +309,4 @@ function getFormElement(label, tag, type='') {
     });
 }
 </script>
+<?= $this->endSection() ?>

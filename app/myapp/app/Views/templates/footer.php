@@ -1,5 +1,3 @@
-</body>
-
 <!-- Footer-->
 <footer class="footer text-center">
     <div class="container">
@@ -24,4 +22,3 @@
         </div>
     </div>
 </footer>
-</html>
