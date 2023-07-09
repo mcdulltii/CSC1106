@@ -52,11 +52,12 @@ $(document).ready(function () {
                 var element_data = {
                     "row": row,
                     "col": col,
-                    "label": "<label>" + label + ":</label>",
+                    "label": "",
                     "input": ""
                 };
                 // Temporary button type for input form element
-                getFormElement(type, "button").then(function (formElem) {
+                getFormElement(label, type, "button").then(function (formElem) {
+                    element_data["label"] = formElem["label"];
                     element_data["input"] = formElem[type];
                     addField(element_data);
                 });
@@ -65,11 +66,12 @@ $(document).ready(function () {
                 var element_data = {
                     "row": row,
                     "col": col,
-                    "label": "<label>" + label + ":</label>",
+                    "label": "",
                     "input": ""
                 };
                 // Temporary button type for input form element
-                getFormElement(type).then(function (formElem) {
+                getFormElement(label, type).then(function (formElem) {
+                    element_data["label"] = formElem["label"];
                     element_data["input"] = formElem[type];
                     addField(element_data);
                 });
@@ -283,7 +285,11 @@ function addField(fieldData) {
 }
 
 // function to call api for element json data with input type as parameter
-function getFormElement(tag, type='') {
+function getFormElement(label, tag, type='') {
+    const params = {
+        label: label,
+        type: type
+    }
     // Return form element after GET request succeeds
     return new Promise(function (resolve, reject) {
         var xhttp = new XMLHttpRequest();
@@ -295,8 +301,9 @@ function getFormElement(tag, type='') {
             }
         };
         // API route
-        xhttp.open("GET", "/form-components/" + tag + '/' + type, true);
-        xhttp.send();
+        xhttp.open("POST", "/form-components/" + tag, true);
+        xhttp.setRequestHeader('Content-type', 'application/json')
+        xhttp.send(JSON.stringify(params));
     });
 }
 </script>
