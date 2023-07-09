@@ -3,7 +3,6 @@
 namespace Config;
 
 use App\Controllers\FormBuilder;
-use App\Controllers\FormController;
 use App\Controllers\FormGeneratorController;
 use App\Controllers\Home;
 use App\Controllers\UserController;
