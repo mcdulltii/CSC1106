@@ -31,9 +31,6 @@ class FormTextarea extends BaseComponent
         }
         $html['textarea'] .= '></textarea>';
 
-        $html['row'] = '';
-        $html['col'] = '';
-
         session()->set('formtextarea_count', ++$this->count);
 
         return $html;

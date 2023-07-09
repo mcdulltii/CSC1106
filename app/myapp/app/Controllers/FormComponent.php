@@ -11,16 +11,18 @@ class FormComponent extends BaseController
 {
     use ResponseTrait;
 
-    public function index($tag, $type = '')
+    public function index($tag)
     {
+        $json = $this->request->getJSON(true);
+
         switch($tag)
         {
             case "input":
                 $component = new FormInput();
                 
-                if ($component->check_supported($type))
+                if ($component->check_supported($json["type"]))
                 {
-                    $data = $component->render($type);
+                    $data = $component->render($json["type"]);
                 }
                 else
                 {
@@ -43,10 +45,5 @@ class FormComponent extends BaseController
                         200,
                         'Successfully rendered'
                     );
-    }
-
-    public function view()
-    {
-        return view("form/index");
     }
 }

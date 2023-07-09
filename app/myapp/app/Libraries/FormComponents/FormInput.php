@@ -65,9 +65,6 @@ class FormInput extends BaseComponent
         }
         $html['input'] .= '>';
 
-        $html['row'] = '';
-        $html['col'] = '';
-
         session()->set('forminput_count', ++$this->count);
 
         return $html;
