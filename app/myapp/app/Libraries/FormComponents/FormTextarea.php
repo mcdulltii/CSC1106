@@ -12,7 +12,7 @@ class FormTextarea extends BaseComponent
         $this->count = session('formtextarea_count') ?? 0;
     }
 
-    function render($type = '')
+    function render($lbl = '', $type = '')
     {
         $html = array();
         $label = new FormLabel();
@@ -23,7 +23,7 @@ class FormTextarea extends BaseComponent
         $this->setAttribute('rows', '5');
         $this->setAttribute('cols', '15');
 
-        $html['label'] = $label->render($form_name);
+        $html['label'] = $label->render($lbl);
 
         $html['textarea'] = '<textarea ';
         foreach ($this->getAttribute() as $name => $value) {

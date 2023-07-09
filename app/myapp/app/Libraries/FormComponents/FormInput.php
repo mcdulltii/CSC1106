@@ -45,7 +45,7 @@ class FormInput extends BaseComponent
         return 0;     // false
     }
 
-    function render($type = '')
+    function render($lbl = '', $type = '')
     {
         $html = array();
 
@@ -56,7 +56,7 @@ class FormInput extends BaseComponent
 
         if (!in_array($type, array('submit', 'reset'))) {
             $label = new FormLabel();
-            $html['label'] = $label->render($form_name);
+            $html['label'] = $label->render($lbl);
         }
 
         $html['input'] = '<input type="' . $type . '"';
