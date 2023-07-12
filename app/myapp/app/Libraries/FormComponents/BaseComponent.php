@@ -3,6 +3,7 @@
 namespace App\Libraries\FormComponents;
 
 abstract class BaseComponent {
+    protected $html;
     protected $attributes;
     protected $validationRules;
 
@@ -10,6 +11,16 @@ abstract class BaseComponent {
     {
         $this->attributes = array();
         // $this->validationRules = array();
+    }
+
+    function setHtml($value)
+    {
+        $this->html .= $value;
+    }
+
+    function getHtml()
+    {
+        return $this->html;
     }
 
     function setAttribute($attr, $value)

@@ -9,16 +9,16 @@ class FormLabel extends BaseComponent
         parent::__construct();
     }
 
-    function render($form_name = '')
+    function render($form_name = '', $value = '')
     {
-        $html = '<label for="' . $form_name . '"';
+        $this->setHtml('<label for="' . $form_name . '"');
 
         foreach ($this->getAttribute() as $name => $value) {
-            $html .= ' ' . $name . '="' . $value . '"';
+            $this->setHtml(' ' . $name . '="' . $value . '"');
         }
 
-        $html .= '>' . $form_name . '</label>';
+        $this->setHtml('>' . $value . '</label>');
         
-        return $html;
+        return $this->getHtml();
     }
 }

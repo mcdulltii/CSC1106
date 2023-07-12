@@ -47,8 +47,6 @@ class FormInput extends BaseComponent
 
     function render($lbl = '', $type = '')
     {
-        $html = array();
-
         $form_name = $type . '_' . $this->count;
         $this->setAttribute('id', $form_name);
         $this->setAttribute('name', $form_name);
@@ -56,17 +54,17 @@ class FormInput extends BaseComponent
 
         if (!in_array($type, array('submit', 'reset'))) {
             $label = new FormLabel();
-            $html['label'] = $label->render($lbl);
+            $this->setHtml($label->render($form_name, $lbl));
         }
 
-        $html['input'] = '<input type="' . $type . '"';
+        $this->setHtml('<input type="' . $type . '"');
         foreach ($this->getAttribute() as $name => $value) {
-            $html['input'] .= ' ' . $name . '="' . $value . '"';
+            $this->setHtml(' ' . $name . '="' . $value . '"');
         }
-        $html['input'] .= '>';
+        $this->setHtml('>');
 
         session()->set('forminput_count', ++$this->count);
 
-        return $html;
+        return $this->getHtml();
     }
 }

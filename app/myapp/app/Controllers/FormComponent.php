@@ -22,7 +22,7 @@ class FormComponent extends BaseController
                 
                 if ($component->check_supported($json["type"]))
                 {
-                    $data = $component->render($json["label"], $json["type"]);
+                    $data["html"] = $component->render($json["label"], $json["type"]);
                 }
                 else
                 {
@@ -32,11 +32,11 @@ class FormComponent extends BaseController
                 break;
             case "textarea":
                 $component = new FormTextarea();
-                $data = $component->render($json["label"], $json["type"]);
+                $data["html"] = $component->render($json["label"], $tag);
                 break;
             default:
                 return $this->setResponseFormat('json')
-                             ->fail('Input type is not supported');
+                             ->fail('Tag is not supported');
         }
 
         return $this->setResponseFormat('json')
