@@ -54,13 +54,11 @@ $(document).ready(function () {
                 var element_data = {
                     "row": row,
                     "col": col,
-                    "label": "",
-                    "input": ""
+                    "html": ""
                 };
                 // Temporary button type for input form element
                 getFormElement(label, type, "button").then(function (formElem) {
-                    element_data["label"] = formElem["label"];
-                    element_data["input"] = formElem[type];
+                    element_data["html"] = formElem["html"];
                     addField(element_data);
                 });
                 break;
@@ -68,13 +66,11 @@ $(document).ready(function () {
                 var element_data = {
                     "row": row,
                     "col": col,
-                    "label": "",
-                    "input": ""
+                    "html": ""
                 };
                 // Temporary button type for input form element
                 getFormElement(label, type).then(function (formElem) {
-                    element_data["label"] = formElem["label"];
-                    element_data["input"] = formElem[type];
+                    element_data["html"] = formElem["html"];
                     addField(element_data);
                 });
                 break;
@@ -221,8 +217,7 @@ $(document).ready(function () {
 function addField(fieldData) {
 
     var field = $("<div class='col'></div>");
-    field.append(fieldData.label);
-    field.append(fieldData.input);
+    field.append(fieldData.html);
 
     // get children elements of form-fields div
     var rows = $("#form-fields").children();
