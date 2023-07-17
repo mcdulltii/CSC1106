@@ -45,12 +45,16 @@ class FormInput extends BaseComponent
         return 0;     // false
     }
 
-    function render($lbl = '', $type = '')
+    function render($lbl = '', $type = '', $datalist = array())
     {
         $form_name = $type . '_' . $this->count;
         $this->setAttribute('id', $form_name);
         $this->setAttribute('name', $form_name);
         $this->setAttribute('value', '');
+        if ($datalist)
+        {
+            $this->setAttribute('list', $form_name . '_list');
+        }
 
         if (!in_array($type, array('submit', 'reset'))) {
             $label = new FormLabel();
@@ -62,6 +66,15 @@ class FormInput extends BaseComponent
             $this->setHtml(' ' . $name . '="' . $value . '"');
         }
         $this->setHtml('>');
+
+        if ($datalist)
+        {
+            $this->setHtml('<datalist id="' . $form_name . '_list">');
+            foreach ($datalist as $data) {
+                $this->setHtml('<option value="' . $data . '">');
+            }
+            $this->setHtml('</datalist>');
+        }
 
         session()->set('forminput_count', ++$this->count);
 

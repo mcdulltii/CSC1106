@@ -33,5 +33,13 @@ abstract class BaseComponent {
         return $this->attributes;
     }
 
+    // check 2d-array
+    function check_opts($options)
+    {
+        if (!is_array($options))
+            return 'false';
+        return count(array_filter($options, 'is_array')) === count($options);
+    }
+
     abstract function render();
 }
