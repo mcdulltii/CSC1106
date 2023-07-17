@@ -15,6 +15,7 @@ services:
   webapp:
     image: docker.io/bitnami/codeigniter:4
     container_name: csc1106_webapp
+    working_dir: /app/myapp
     ports:
       - '8000:8000'
     environment:
