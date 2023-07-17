@@ -134,9 +134,4 @@ class FormComponent extends BaseController
                 'Successfully rendered'
             );
     }
-
-    public function view()
-    {
-        return view('form/index');
-    }
 }
