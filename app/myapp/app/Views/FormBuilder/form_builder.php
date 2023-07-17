@@ -2,24 +2,8 @@
 
 <?= $this->section('body') ?>
 <div class="grid-container" id="form-builder">
-    <div id="form-fields" class="item3 container">
-        <!-- The form fields will be dynamically added here -->
-
-    </div>
-    <div class="item4">
-        <div><label>Row</label><input type="text" id="row-input"></div>
-        <div><label>Column</label><input type="text" id="col-input"></div>
-        <div><label>Label</label><input type="text" id="label-input"></div>
-        <div><label>Input type</label>
-            <select id="type-input">
-                <option value="input">Input</option>
-                <option value="textarea">Text Area</option>
-            </select>
-        </div>
-        <div><button type="button" id="add-field">Add Field</button></div>
-        <div><button type="button" id="delete-field">Delete Field</button></div>
-        <div><button type="button" id="save-form">Save</button></div>
-    </div>
+    <div id="form-fields" class="item3"></div>
+    <div id="form-fields-buttons" class="item4"></div>
 </div>
 <div id='pageMessages'></div>
 
@@ -37,6 +21,79 @@ if(<?= isset($form) ? 'true' : 'false' ?>){
 }
 
 $(document).ready(function () {
+    // Form fields array
+    const form_fields = ['Button', 'Fieldset', 'Input', 'Label', 'Select', 'Textarea'];
+
+    // Create modal
+    var modal = $("<div class='modal fade' id='form-fields-modal' tabindex='-1' role='dialog' aria-labelledby='form-fields-modal-label' aria-hidden='true'></div>");
+    var modal_dialog = $("<div class='modal-dialog' role='document'></div>");
+    var modal_content = $("<div class='modal-content'></div>");
+    var modal_header = $("<div class='modal-header'></div>");
+    var modal_title = $("<h5 class='modal-title' id='form-fields-modal-label'></h5>");
+    var modal_close_button = $("<button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>");
+    var modal_body = $("<div class='modal-body'></div>");
+    var modal_footer = $("<div class='modal-footer'></div>");
+    var modal_add_button = $("<button type='button' class='btn btn-primary' data-dismiss='modal'>Add</button>");
+
+    // Append modal elements to modal
+    modal_header.append(modal_title);
+    modal_header.append(modal_close_button);
+    modal_footer.append(modal_add_button);
+    modal_content.append(modal_header);
+    modal_content.append(modal_body);
+    modal_content.append(modal_footer);
+    modal_dialog.append(modal_content);
+    modal.append(modal_dialog);
+
+    // Append modal to #form-fields-buttons div
+    $("#form-fields-buttons").append(modal);
+
+    // Iterate form_fields to add buttons into #form-fields-buttons div, and add click event to each button to open a modal
+    for (var i = 0; i < form_fields.length; i++) {
+        // Create button
+        var button = $("<button class='btn btn-secondary w-100 my-1' data-toggle='modal' data-target='#form-fields-modal'>" + form_fields[i] + "</button>");
+
+        // Append button to #form-fields-buttons div
+        $("#form-fields-buttons").append(button);
+
+        // Add click event to button
+        button.click(function () {
+            // Get button text
+            var button_text = $(this).text();
+
+            // Empty modal body
+            modal_body.empty();
+
+            // Switch case for button text
+            switch (button_text) {
+                case "Button":
+                    modal_body.append(""); // TODO
+                    break;
+                case "Fieldset":
+                    modal_body.append(""); // TODO
+                    break;
+                case "Input":
+                    modal_body.append(""); // TODO
+                    break;
+                case "Label":
+                    modal_body.append(""); // TODO
+                    break;
+                case "Select":
+                    modal_body.append(""); // TODO
+                    break;
+                case "Textarea":
+                    modal_body.append(""); // TODO
+                    break;
+                default:
+                    modal_body.append("<p>Something went wrong</p>");
+            }
+
+            // Show modal
+            modal_title.text(button_text);
+            $("#form-fields-modal").modal('show');
+        });
+    }
+
     // Add field button click event
     $("#add-field").click(function () {
 
