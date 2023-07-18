@@ -2,7 +2,9 @@
 
 <?= $this->section('body') ?>
 <div class="grid-container" id="form-builder">
-    <div id="form-fields" class="item3"></div>
+    <div class="item3">
+        <div id="form-fields" class="container h-100"></div>
+    </div>
     <div id="form-fields-buttons" class="item4"></div>
 </div>
 <div id='pageMessages'></div>
@@ -96,7 +98,6 @@ $(document).ready(function () {
 
     // Add field button click event
     $("#add-field").click(function () {
-
         // get value from row, column label and input type inputs
         var row = $("#row-input").val();
         var col = $("#col-input").val();
@@ -272,69 +273,44 @@ $(document).ready(function () {
 // function to add field to form-fields div
 // accepts fieldData object with label html, type html, row and col properties
 function addField(fieldData) {
+    // Convert div of divs from #form-fields into an array of arrays
+    var rows = Array.from($("#form-fields").children()).map(function (row) {
+        return Array.from($(row).children());
+    });
 
-    var field = $("<div class='col'></div>");
-    field.append(fieldData.html);
+    // If the row property of fieldData is greater than the number of divs in #form-fields, add divs until the number of divs in #form-fields is equal to the row property of fieldData
+    if (fieldData["row"] > rows.length) {
+        for (var i = 0; i < fieldData["row"]; i++) {
+            // Create row div
+            var row = $("<div class='col-sm border border-dark h-100'></div>");
 
-    // get children elements of form-fields div
-    var rows = $("#form-fields").children();
-
-    // get child_row at index row
-    var child_row = rows.eq(fieldData.row - 1);
-
-    // if child_row is undefined, create a new row
-    // else if row is greater than number of rows, create a new row and append to form-fields
-    // else if row is less than 1, create a new row and prepend to form-fields
-    // else append field to child_row
-    if (child_row == undefined || child_row.length == 0) {
-        console.log("child row is undefined");
-        child_row = $("<div class='row'></div>");
-        child_row.append(field);
-        $("#form-fields").append(child_row);
+            // Append row div to #form-fields div
+            rows.push(row);
+        }
     }
-    else if (fieldData.row > rows.length) {
-        console.log("row is greater than child row length");
-        new_row = $("<div class='row'></div>");
-        new_row.append(field);
-        $("#form-fields").append(new_row);
+
+    // If the col property of fieldData is greater than the number of divs in the row property of fieldData, add divs until the number of divs in the row property of fieldData is equal to the col property of fieldData
+    if (fieldData["col"] > rows[fieldData["row"] - 1].length) {
+        for (var i = rows[fieldData["row"] - 1].length; i < fieldData["col"]; i++) {
+            // Create col div
+            var col = $("<div class='col-sm border border-dark h-100'></div>");
+
+            // Append col div to row div
+            rows[fieldData["row"] - 1].push(col);
+        }
     }
-    else if (fieldData.row < 1) {
-        console.log("row is less than 1");
-        new_row = $("<div class='row'></div>");
-        new_row.append(field);
-        $("#form-fields").prepend(new_row);
-    }
-    else {
-        console.log("row is defined");
-        // child_row.append(field);
 
-        // get children elements of child_row
-        var cols = child_row.children();
+    // Place html property of fieldData in the col div at index col - 1 in the row div at index row - 1
+    rows[fieldData["row"] - 1][fieldData["col"] - 1].append(fieldData["html"]);
 
-        // get child_col at index col
-        var child_col = cols.eq(fieldData.col - 1);
-
-        // if child_col is undefined, create a new col
-        // else if col is greater than number of cols, create a new col and append to child_row
-        // else if col is less than 1, create a new col and prepend to child_row
-        // else insert field before child_col
-        if (child_col == undefined || child_col.length == 0) {
-            console.log("child col is undefined");
-            child_row.append(field);
+    // Convert array of arrays back into div of divs and append to #form-fields div
+    $("#form-fields").empty();
+    for (var i = 0; i < rows.length; i++) {
+        var row = $("<div class='row border border-dark h-25'></div>");
+        for (var j = 0; j < rows[i].length; j++) {
+            row.append(rows[i][j]);
         }
-        else if (fieldData.col > cols.length) {
-            console.log("col is greater than child col length");
-            child_row.append(field);
-        }
-        else if (fieldData.col < 1) {
-            console.log("col is less than 1");
-            child_row.prepend(field);
-        }
-        else {
-            console.log("col is defined");
-            field.insertBefore(child_col);
-        }
-
+        $("#form-fields").append(row);
     }
 }
 
