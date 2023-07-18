@@ -16,43 +16,83 @@ class FormInput extends BaseComponent
 
     function check_supported($type)
     {
-        $types = ["button",
-                  "checkbox",
-                  "color",
-                  "date",
-                  "datetime-local",
-                  "email",
-                  "file",
-                  "hidden",
-                  "image",
-                  "month",
-                  "number",
-                  "password",
-                  "radio",
-                  "range",
-                  "reset",
-                  "search",
-                  "submit",
-                  "tel",
-                  "text",
-                  "time",
-                  "url",
-                  "week"
-                ];
-        
+        $types = [
+            "button",
+            "checkbox",
+            "color",
+            "date",
+            "datetime-local",
+            "email",
+            "file",
+            "hidden",
+            "image",
+            "month",
+            "number",
+            "password",
+            "radio",
+            "range",
+            "reset",
+            "search",
+            "submit",
+            "tel",
+            "text",
+            "time",
+            "url",
+            "week"
+        ];
+
         if (in_array($type, $types))
             return 1; // true
         return 0;     // false
     }
 
-    function render($lbl = '', $type = '', $datalist = array())
+    function check_Attr($attrs, $type)
+    {
+        $commonAttributes = ["class", "value", "disabled"];
+        $inputTypeAttributes = [
+            "checkbox" => ["required", "checked"],
+            "date" => ["min", "max", "pattern", "step"],
+            "datetime-local" => ["min", "max", "step"],
+            "email" => ["size", "multiple", "pattern", "placeholder", "required"],
+            "file" => ["multiple", "required"],
+            "image" => ["alt", "height", "width"],
+            "month" => ["min", "max", "step"],
+            "number" => ["min", "max", "required", "step"],
+            "password" => ["size", "pattern", "placeholder", "required"],
+            "radio" => ["required"],
+            "range" => ["min", "max", "step"],
+            "search" => ["size", "pattern", "placeholder", "required"],
+            "tel" => ["size", "pattern", "placeholder", "required"],
+            "text" => ["readonly", "size", "pattern", "placeholder", "required"],
+            "time" => ["min", "max", "step"],
+            "url" => ["size", "pattern", "placeholder", "required"],
+            "week" => ["min", "max", "step"]
+        ];
+        $message = "Unsupported attributes for input type '$type': ";
+
+        return $this->check_additonalAttr(
+            $commonAttributes,
+            $attrs,
+            $message,
+            $inputTypeAttributes,
+            $type
+        );
+    }
+
+    function render($lbl = '', $type = '', $datalist = array(), $attrs = array())
     {
         $form_name = $type . '_' . $this->count;
         $this->setAttribute('id', $form_name);
         $this->setAttribute('name', $form_name);
-        $this->setAttribute('value', '');
-        if ($datalist)
-        {
+        if ($attrs) {
+            foreach ($attrs as $name => $value) {
+                if (in_array($name, $this->booleanAttributes))
+                    $this->setAttribute($name, true);
+                else
+                    $this->setAttribute($name, $value);
+            }
+        }
+        if ($datalist) {
             $this->setAttribute('list', $form_name . '_list');
         }
 
@@ -63,12 +103,14 @@ class FormInput extends BaseComponent
 
         $this->setHtml('<input type="' . $type . '"');
         foreach ($this->getAttribute() as $name => $value) {
-            $this->setHtml(' ' . $name . '="' . $value . '"');
+            if (in_array($name, $this->booleanAttributes))
+                $this->setHtml(' ' . $name);
+            else
+                $this->setHtml(' ' . $name . '="' . $value . '"');
         }
         $this->setHtml('>');
 
-        if ($datalist)
-        {
+        if ($datalist) {
             $this->setHtml('<datalist id="' . $form_name . '_list">');
             foreach ($datalist as $data) {
                 $this->setHtml('<option value="' . $data . '">');

@@ -38,18 +38,41 @@ class FormSelect extends BaseComponent
         return $html;
     }
 
-    function render($lbl = '', $options = '', $optgroups = '')
+    function check_Attr($attrs)
+    {
+        $commonAttributes = ["class", "name", "disabled", "multiple", "required"];
+        $message = "Unsupported attributes for 'select': ";
+
+        return $this->check_additonalAttr(
+            $commonAttributes,
+            $attrs,
+            $message
+        );
+    }
+
+    function render($lbl = '', $options = '', $optgroups = '', $attrs = array())
     {
         $form_name = 'select_' . $this->count;
         $this->setAttribute('id', $form_name);
         $this->setAttribute('name', $form_name);
+        if ($attrs) {
+            foreach ($attrs as $name => $value) {
+                if (in_array($name, $this->booleanAttributes))
+                    $this->setAttribute($name, true);
+                else
+                    $this->setAttribute($name, $value);
+            }
+        }
 
         $label = new FormLabel();
         $this->setHtml($label->render($form_name, $lbl));
 
         $this->setHtml('<select');
         foreach ($this->getAttribute() as $name => $value) {
-            $this->setHtml(' ' . $name . '="' . $value . '"');
+            if (in_array($name, $this->booleanAttributes))
+                $this->setHtml(' ' . $name);
+            else
+                $this->setHtml(' ' . $name . '="' . $value . '"');
         }
         $this->setHtml('>');
         $this->setHtml($this->generate_options($options, $optgroups));

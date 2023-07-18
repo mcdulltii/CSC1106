@@ -12,21 +12,51 @@ class FormTextarea extends BaseComponent
         $this->count = session('formtextarea_count') ?? 0;
     }
 
-    function render($lbl = '', $type = '')
+    function check_Attr($attrs)
+    {
+        $commonAttributes = [
+            "class",
+            "name",
+            "disabled",
+            "rows",
+            "cols",
+            "placeholder",
+            "readonly",
+            "required",
+        ];
+        $message = "Unsupported attributes for 'textarea': ";
+
+        return $this->check_additonalAttr(
+            $commonAttributes,
+            $attrs,
+            $message
+        );
+    }
+
+    function render($lbl = '', $type = '', $attrs = array())
     {
         $label = new FormLabel();
 
         $form_name = $type . '_' . $this->count;
         $this->setAttribute('id', $form_name);
         $this->setAttribute('name', $form_name);
-        $this->setAttribute('rows', '5');
-        $this->setAttribute('cols', '15');
+        if ($attrs) {
+            foreach ($attrs as $name => $value) {
+                if (in_array($name, $this->booleanAttributes))
+                    $this->setAttribute($name, true);
+                else
+                    $this->setAttribute($name, $value);
+            }
+        }
 
         $this->setHtml($label->render($form_name, $lbl));
 
         $this->setHtml('<textarea ');
         foreach ($this->getAttribute() as $name => $value) {
-            $this->setHtml(' ' . $name . '="' . $value . '"');
+            if (in_array($name, $this->booleanAttributes))
+                $this->setHtml(' ' . $name);
+            else
+                $this->setHtml(' ' . $name . '="' . $value . '"');
         }
         $this->setHtml('></textarea>');
 

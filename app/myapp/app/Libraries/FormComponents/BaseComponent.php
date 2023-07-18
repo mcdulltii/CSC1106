@@ -2,15 +2,22 @@
 
 namespace App\Libraries\FormComponents;
 
-abstract class BaseComponent {
+abstract class BaseComponent
+{
     protected $html;
     protected $attributes;
+    protected $booleanAttributes;
     protected $validationRules;
 
     function __construct()
     {
         $this->attributes = array();
-        // $this->validationRules = array();
+        $this->booleanAttributes = [
+            "readonly",
+            "disabled",
+            "required",
+            "multiple",
+        ];
     }
 
     function setHtml($value)
@@ -39,6 +46,28 @@ abstract class BaseComponent {
         if (!is_array($options))
             return 'false';
         return count(array_filter($options, 'is_array')) === count($options);
+    }
+
+    protected function check_additonalAttr(
+        $commonAttributes,
+        $attrs,
+        $message,
+        $typeAttributes = array(),
+        $type = ''
+    ) {
+        $supportedAttributes = array_merge($commonAttributes, $typeAttributes[$type] ?? []);
+        $unsupportedAttributes = array_diff(array_keys($attrs), $supportedAttributes);
+
+        if (!empty($unsupportedAttributes)) {
+            $errMessage = [
+                "error" => $message . implode(', ', $unsupportedAttributes),
+                "message" => "Supported attributes are: " . implode(', ', $supportedAttributes),
+            ];
+
+            return $errMessage;
+        } else {
+            return true;
+        }
     }
 
     abstract function render();
