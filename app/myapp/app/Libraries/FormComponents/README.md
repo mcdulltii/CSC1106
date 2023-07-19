@@ -96,18 +96,28 @@
 #### Attributes
 ```json
 {
-    "type": "button" | "checkbox" |
-            "color"  | "date"     |
-            "datetime-local"      |
-            "email"  | "file"     |
-            "hidden" | "image"    |
-            "month"  | "number"   |
-            "radio"  | "password" |
-            "range"  | "reset"    |
-            "search" | "submit"   |
-            "tel"    | "text"     |
-            "time"   | "url"      |
-            "week"   |
+    "type": "button"
+            "checkbox"
+            "color"
+            "date"
+            "datetime-local"
+            "email"
+            "file"
+            "hidden"
+            "image"
+            "month"
+            "number"
+            "radio"
+            "password"
+            "range"
+            "reset"
+            "search"
+            "submit"
+            "tel"
+            "text"
+            "time"
+            "url"
+            "week"
     "attributes": {
         "class": "input-class",
         "value": "default value",
