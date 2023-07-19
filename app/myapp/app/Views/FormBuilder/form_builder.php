@@ -96,6 +96,11 @@ $(document).ready(function () {
         modal_body.find('input, select').each(function () {
             var key = $(this).attr('name');
             var value = $(this).val();
+             // Check if the property is "options" and if so, convert it to an array
+            if (key === 'options') {
+                value = value.split(',').map(option => option.trim());
+            }
+            
             params[key] = value;
         });
         console.log(params);
@@ -151,9 +156,16 @@ function appendHTMLToGrid(htmlCode) {
 // Function to delete the cell when the delete button is clicked
 function deleteCell(button) {
     var item = button.closest('.item');
-    item.remove();
-}
+    var row = item.closest('.rowGrid');
+    var cells = row.getElementsByClassName('item');
 
+    // If the row contains only one cell (excluding the "add column" button), remove the entire row
+    if (cells.length === 1) {
+        row.remove();
+    } else {
+        item.remove();
+    }
+}
 let draggedItem = null;
 
 function dragStart(event) {
