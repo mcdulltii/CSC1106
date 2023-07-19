@@ -3,8 +3,7 @@
 <?= $this->section('body') ?>
 <div class="grid-container" id="form-builder">
     <div id="form-fields" class="item3">
-        <!-- The initial row with the "plus" button container -->
-        <div class="rowGrid plus-button-container">  
+        <div class="rowGrid plus-button-container">
             <div class="plus-button" onclick="addNewRow()">+</div>
         </div>
     </div>
@@ -26,6 +25,9 @@ if(<?= isset($form) ? 'true' : 'false' ?>){
 }
 
 $(document).ready(function () {
+    // Add a default row to the grid
+    addNewRow();
+
     // Form fields array
     const form_fields = [
         { type: 'button', label: 'Button', properties: ['type', 'value'] },
@@ -90,7 +92,7 @@ $(document).ready(function () {
         })(form_fields[i]);
     }
 
-    // Add button click event 
+    // Add button click event
     modal_add_button.click(function () {
         var params = {};
         modal_body.find('input, select').each(function () {
@@ -101,7 +103,7 @@ $(document).ready(function () {
             if (key == 'optgroups') {
                 if (value != ''){
                     value = value.split(',').map(str => str.trim());
-                    params[key]=value;
+                    params[key] = value;
                 }
             } else if (key == 'options') {
                 if (value.includes('[')){
@@ -122,7 +124,7 @@ $(document).ready(function () {
                     value = value.split(',').map(str => str.trim());
                     console.log("no optgrps");
                 } 
-                params[key]=value;
+                params[key] = value;
             } else {
                 params[key] = value;  
             }
@@ -130,9 +132,8 @@ $(document).ready(function () {
         console.log(params);
         console.log(modal_title.text().toLowerCase().replace(/ /g, ''));
         getFormElement(modal_title.text().toLowerCase().replace(/ /g, ''), params).then(function (formElem){
-            appendHTMLToGrid(formElem["html"]);
-        })
-        
+            addHTMLToGrid(document.getElementById('row').value , document.getElementById('column').value, formElem["html"]);
+        });
     });
 });
 
@@ -166,15 +167,12 @@ function createFragment(htmlStr) {
 }
 
 // Function to append user-provided HTML above the "plus" button
-function appendHTMLToGrid(htmlCode) {
-    var newRow = '<div class="rowGrid" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
-        '<div class="itemsContainer">' +
-        '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' + htmlCode +
-        '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
-        '</div></div>' +
-        '<div class="col-plus-button" onclick="addNewColumn(this.parentNode)">+</div>'+
-        '</div>';
-        document.getElementById("form-fields").insertBefore(createFragment(newRow), document.querySelector('.plus-button-container'));
+function addHTMLToGrid(row, col, htmlCode) {
+    var rowGrid = document.getElementById("form-fields").getElementsByClassName("rowGrid")[row - 1];
+    var colGrid = rowGrid.getElementsByClassName('item')[col - 1];
+    colGrid.innerHTML = htmlCode + '<div class="delete-button" onclick="deleteCell(this)">x</div>';
+    // Remove highlighted-item class from the selected cell
+    colGrid.classList.remove('highlighted-item');
 }
 
 // Function to delete the cell when the delete button is clicked
@@ -237,40 +235,86 @@ document.addEventListener('drop', drop);
 document.addEventListener('dragend', dragEnd);
 
 function generateModalBody(buttonType, properties){
-        var modalBodyHTML = "";
-        types = ["color", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number", 
-                    "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week"];
-        for (var i = 0; i < properties.length; i++) {
-            var property = properties[i];
-            if (buttonType == 'button' && property == 'type') {
-                modalBodyHTML += '<div class="form-group row">' +
-                    '<label class="col-sm-4 col-form-label">Type:</label>' +
-                    '<div class="col-sm-8">' +
-                    '<select name="type" id="bType" class="form-select">' +
-                    '<option value="button">Button</option><option value="submit">Submit</option><option value="reset">Reset</option></select>' +
-                    '</div></div>';
-            } else if (buttonType == 'input' && property == 'type') {
-                var options = "";
-                for (var i = 0; i < types.length; i++) {
-                    options += '<option value="' + types[i] + '">' + types[i] + '</option>'
-                }
-                modalBodyHTML += '<div class="form-group row">' +
-                    '<label class="col-sm-4 col-form-label">Type:</label>' +
-                    '<div class="col-sm-8">' +
-                    '<select name="type" id="iType" class="form-select">' + options + '</select></div></div>';
-            } else { // text fields
-                modalBodyHTML += '<div class="form-group row">' + 
-                    '<label for="' + property + '" class="col-sm-4 col-form-label">' + property.charAt(0).toUpperCase() + property.slice(1) + ':</label>' +
-                    '<div class="col-sm-8">' + '<input type="text" class="form-control" name="'+ property + '" id="' + property + '"></div></div>';
+    var modalBodyHTML = "";
+    types = ["color", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number",
+                "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week"];
+    // Generate modal body HTML
+    for (var i = 0; i < properties.length; i++) {
+        var property = properties[i];
+        if (buttonType == 'button' && property == 'type') {
+            modalBodyHTML += '<div class="form-group row">' +
+                '<label class="col-sm-4 col-form-label">Type:</label>' +
+                '<div class="col-sm-8">' +
+                '<select name="type" id="bType" class="form-select">' +
+                '<option value="button">Button</option><option value="submit">Submit</option><option value="reset">Reset</option></select>' +
+                '</div></div>';
+        } else if (buttonType == 'input' && property == 'type') {
+            var options = "";
+            for (var i = 0; i < types.length; i++) {
+                options += '<option value="' + types[i] + '">' + types[i] + '</option>'
             }
+            modalBodyHTML += '<div class="form-group row">' +
+                '<label class="col-sm-4 col-form-label">Type:</label>' +
+                '<div class="col-sm-8">' +
+                '<select name="type" id="iType" class="form-select">' + options + '</select></div></div>';
+        } else { // text fields
+            modalBodyHTML += '<div class="form-group row">' +
+                '<label for="' + property + '" class="col-sm-4 col-form-label">' + property.charAt(0).toUpperCase() + property.slice(1) + ':</label>' +
+                '<div class="col-sm-8">' + '<input type="text" class="form-control" name="'+ property + '" id="' + property + '"></div></div>';
         }
-        return modalBodyHTML;
     }
 
+    // Get number of rows from #form-fields div
+    var rows = document.getElementById('form-fields').getElementsByClassName('rowGrid').length - 1;
+    // Add row dropdown selection to modal body
+    modalBodyHTML += '<div class="form-group row">' +
+        '<label for="row" class="col-sm-4 col-form-label">Row:</label>' +
+        '<div class="col-sm-8">' +
+        '<select name="row" id="row" class="form-select" onchange="detectRowChange(this)">';
+    modalBodyHTML += '<option id="default-row" value="">Choose a row</option>';
+    for (var i = 1; i <= rows; i++) {
+        modalBodyHTML += '<option value="' + i + '">' + i + '</option>';
+    }
+    modalBodyHTML += '</select></div></div>';
+
+    // Add column dropdown selection to modal body
+    modalBodyHTML += '<div class="form-group row">' +
+        '<label for="column" class="col-sm-4 col-form-label">Column:</label>' +
+        '<div class="col-sm-8">' +
+        '<select name="column" id="column" class="form-select" onchange="detectColChange(this)">' +
+        '<option id="default-col" value="">Choose a column</option>' +
+        '</select></div></div>';
+
+    return modalBodyHTML;
+}
+
+function detectRowChange(sel) {
+    // Get number of columns in the row
+    var cols = document.getElementById('form-fields').getElementsByClassName('rowGrid')[sel.value - 1].getElementsByClassName('item').length;
+    // Add column dropdown options to modal body
+    $('#column').empty();
+    $('#column').append('<option id="default-col" value="">Choose a column</option>');
+    for (var i = 1; i <= cols; i++) {
+        $('#column').append('<option value="' + i + '">' + i + '</option>');
+    }
+    // Remove default row option
+    $('#default-row').remove();
+}
+
+function detectColChange(column) {
+    // Remove default col option
+    $('#default-col').remove();
+    // Get row and column number
+    const row = document.getElementById('row').value;
+    const col = column.value;
+    var rowGrid = document.getElementById("form-fields").getElementsByClassName("rowGrid")[row - 1];
+    var colGrid = rowGrid.getElementsByClassName('item')[col - 1];
+    // Add highlighted-item class to the selected cell
+    colGrid.classList.add('highlighted-item');
+}
 
 // function to call api for element json data with input type as parameter
 function getFormElement(tag, params) {
-
     // Return form element after GET request succeeds
     return new Promise(function (resolve, reject) {
         var xhttp = new XMLHttpRequest();
