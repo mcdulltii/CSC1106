@@ -41,7 +41,7 @@ table {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0px; 
+    padding: 0px;
     padding-left: 10px;
     overflow: hidden;
 }
@@ -54,13 +54,15 @@ table {
 .item {
     position: relative;
     padding: 10px;
+    min-height: 30px;
+    margin: 2px;
     flex-grow: 1; /* Allow the columns to resize within the itemsContainer */
-    transition: background-color 0.2s; 
+    transition: background-color 0.2s;
     background-color: white;
 }
 
 .col-plus-button {
-    width: 10%; 
+    width: 10%;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -68,10 +70,10 @@ table {
     font-size: 15px;
     font-weight: bold;
     width: 50px;
-    height: 15px; 
+    height: 30px;
     border-radius: 15px;
-    background-color: #2196F3; 
-    color: white; 
+    background-color: #2196F3;
+    color: white;
     margin-right:5px;
 }
 
@@ -79,9 +81,9 @@ table {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: transparent; 
-    border: none; 
-    padding: 5px; 
+    background-color: transparent;
+    border: none;
+    padding: 5px;
     flex-direction: column;
 }
 
@@ -93,13 +95,11 @@ table {
     font-size: 18px;
     font-weight: bold;
     width: 150px;
-    height: 30px; 
+    height: 30px;
     border-radius: 15px;
-    background-color: #2196F3; 
-    color: white; 
+    background-color: #2196F3;
+    color: white;
 }
-
-
 
 .delete-button {
     position: absolute;
@@ -109,7 +109,7 @@ table {
     cursor: pointer;
     font-size: 18px;
     color: grey;
-    display: none; 
+    display: none;
 }
 
 .item:hover:not(.plus-button-container) {
@@ -124,3 +124,12 @@ table {
     background-color: gainsboro; /* Set the desired background color for the drop target */
 }
 
+.modal-dialog {
+    opacity: 0.9;
+}
+
+.highlighted-item {
+    -webkit-box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    -moz-box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
