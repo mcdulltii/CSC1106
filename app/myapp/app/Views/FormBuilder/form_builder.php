@@ -138,7 +138,7 @@ function createFragment(htmlStr) {
 
 // Function to append user-provided HTML above the "plus" button
 function appendHTMLToGrid(htmlCode) {
-    var newRow = '<div class="rowGrid">' +
+    var newRow = '<div class="rowGrid" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
         '<div class="itemsContainer">' +
         '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' + htmlCode +
         '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
