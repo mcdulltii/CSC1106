@@ -3,11 +3,11 @@
 namespace Config;
 
 use App\Controllers\FormBuilder;
-use App\Controllers\FormController;
 use App\Controllers\FormGeneratorController;
 use App\Controllers\Home;
 use App\Controllers\UserController;
 use App\Controllers\BaseController;
+use App\Controllers\FormComponent;
 
 // Create a new instance of our RouteCollection class.
 $routes = Services::routes();
@@ -42,7 +42,9 @@ $routes->get('/', 'Home::index');
 $routes->get('form/create', [FormBuilder::class, 'index']);
 $routes->get('form/edit/(:any)', [FormBuilder::class, 'editForm']);
 $routes->post('form/save', 'FormBuilder::saveForm');
-$routes->post('form-builder/save-form', 'FormBuilder::saveForm');
+
+$routes->post('form-components/(:segment)', [[FormComponent::class, 'index'], '$1']);
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

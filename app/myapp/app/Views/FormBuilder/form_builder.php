@@ -1,105 +1,335 @@
-<html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, height=device-height">
-        <base href="<?php echo base_url()?>" />
+<?= $this->extend('layout/bootstrap') ?>
 
-        <script src="https://draggable.github.io/formeo/assets/js/formeo.min.js"></script>
-        <link rel="stylesheet" href="https://draggable.github.io/formeo/assets/css/formeo.min.css">
-        
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        
-        <link href="css/styles.css" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.3/animate.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-        
-        <script src="js/createAlert.js"></script>
-        <link rel="stylesheet" href="css/alert.css">
-        
-        <style>
-            body {
-                background: radial-gradient(circle, #484848, #2F3031);
-                height: 100vh;
-            }
-            .formeo-panels-wrap .panel-labels {
-                height: auto;
-            }
-            .field-control button, .formeo-controls .field-control button{
-                height: auto;
-            }
-            .formeo.formeo-editor .children  {
-                height: auto;
-            }
-        </style>
+<?= $this->section('body') ?>
+<div class="grid-container" id="form-builder">
+    <div id="form-fields" class="item3">
+        <div class="rowGrid plus-button-container">
+            <div class="plus-button" onclick="addNewRow()">+</div>
+        </div>
+    </div>
+    <div id="form-fields-buttons" class="item4"></div>
+</div>
+<div id='pageMessages'></div>
 
-        <title>Form Builder</title>
-    </head>
+<script>
+// If the form variable is set, we are editing an existing form
+// Else, do nothing as we are creating a new form
+if(<?= isset($form) ? 'true' : 'false' ?>){
+    // Parse the form variable into a JSON object
+    formData = JSON.parse(<?= json_encode($form, JSON_UNESCAPED_UNICODE); ?>);
+    console.log(formData);
+    // Iterate thtough the json object and add each field to the form
+    for (var i = 0; i < formData.length; i++) {
+        addField(formData[i]);
+    }
+}
 
-    <body>
-        <div id='formeo-editor'></div>   
-        <div id='pageMessages'></div>
-    </body>
+$(document).ready(function () {
+    // Add a default row to the grid
+    addNewRow();
 
-    <script type="text/javascript">
-        function onSave(formData){
-            if (confirm('Are you sure you want to save this form?')){
-                console.log(formData);
+    // Form fields array
+    const form_fields = [
+        { type: 'button', label: 'Button', properties: ['type', 'value'] },
+        { type: 'fieldset', label: 'Fieldset', properties: ['legend'] }, //to change FormFieldset.php?
+        { type: 'input', label: 'Input', properties: ['label', 'type', 'datalist'] },
+        { type: 'label', label: 'Label', properties: ['form_name', 'value'] },
+        { type: 'select', label: 'Select', properties: ['label','options','optgroups'] },
+        { type: 'textarea', label: 'Text Area', properties: ['label', 'type'] }
+    ];
 
-                var form = JSON.stringify({
-                    'formData': JSON.stringify(formData),
-                });
+    // Create modal
+    var modal = $("<div class='modal fade' id='form-fields-modal' tabindex='-1' role='dialog' aria-labelledby='form-fields-modal-label' aria-hidden='true'></div>");
+    var modal_dialog = $("<div class='modal-dialog' role='document'></div>");
+    var modal_content = $("<div class='modal-content'></div>");
+    var modal_header = $("<div class='modal-header'></div>");
+    var modal_title = $("<h5 class='modal-title' id='form-fields-modal-label'></h5>");
+    var modal_close_button = $("<button type='button' class='close' data-bs-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>");
+    var modal_body = $("<div class='modal-body'></div>");
+    var modal_footer = $("<div class='modal-footer'></div>");
+    var modal_add_button = $("<button type='button' class='btn btn-primary' data-bs-dismiss='modal' id='modal-add-button'>Add</button>");
 
-                console.log(form);
+    // Append modal elements to modal
+    modal_header.append(modal_title);
+    modal_header.append(modal_close_button);
+    modal_footer.append(modal_add_button);
+    modal_content.append(modal_header);
+    modal_content.append(modal_body);
+    modal_content.append(modal_footer);
+    modal_dialog.append(modal_content);
+    modal.append(modal_dialog);
 
-                // Send the form data to the server
-                fetch('/form-builder/save-form', {
-                    method: 'POST',
-                    headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                    body: form
-                })
-                .then(response => {
-                    console.log(response);
+    // Append modal to #form-fields-buttons div
+    $("#form-fields-buttons").append(modal);
 
-                    if(response.ok){
-                        createAlert('','Form saved successfully','','success',true,true,'pageMessages');
-                        
-                        // Redirect to home if we are creating a new form
-                        if(<?php echo !isset($form) ? 'true' : 'false' ?>){
-                            location.href = '<?php echo base_url('/');?>';
-                        }
-                    }
-                    else{
-                        createAlert('Opps!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    createAlert('Opps!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
-                });
-            }
-        }
+    // Iterate form_fields to add buttons into #form-fields-buttons div, and add click event to each button to open a modal
+    for (var i = 0; i < form_fields.length; i++) {
+        (function(field) {
+            // Create button
+            button_label = field.label;
+            var button = $("<button class='btn btn-secondary w-100 my-1' data-toggle='modal' data-target='#form-fields-modal'>" + field.label + "</button>");
 
-        // If the form variable is set, we are editing an existing form
-        // Else, we are creating a new form
-        if(<?php echo isset($form) ? 'true' : 'false' ?>){
-            // Parse the form variable into a JSON object
-            formData = JSON.parse(<?= json_encode($form, JSON_UNESCAPED_UNICODE); ?>);
-            // Create a new formeo editor instance with the form data
-            var formeo = new FormeoEditor({
-                editorContainer: '#formeo-editor',
-                events: {onSave: onSave},
-            }, formData['formData']);
-        }
-        else {
-            // Create a new formeo editor instance
-            var formeo = new FormeoEditor({
-                editorContainer: '#formeo-editor',
-                events: {onSave: onSave},
+            // Append button to #form-fields-buttons div
+            $("#form-fields-buttons").append(button);
+
+            // Add click event to button
+            button.click(function () {
+
+                var button_type = field.type;
+                var properties = field.properties;
+                var modalBodyHTML = generateModalBody(button_type, properties);
+                if (button_type){
+                    modal_body.empty();
+                    modal_body.append(modalBodyHTML);
+                } else{
+                    modal_body.append("<p>Something went wrong</p>");
+                }
+
+                // Show modal
+                modal_title.text(field.label);
+                $("#form-fields-modal").modal('show');
             });
-        }
-    </script>
+        })(form_fields[i]);
+    }
 
-</html>
+    // Add button click event
+    modal_add_button.click(function () {
+        var params = {};
+        modal_body.find('input, select').each(function () {
+            var key = $(this).attr('name');
+            var value = $(this).val();
+
+            // Modify value for 'optgroups' and 'options' fields
+            if (key == 'optgroups') {
+                if (value != ''){
+                    value = value.split(',').map(str => str.trim());
+                    params[key] = value;
+                }
+            } else if (key == 'options') {
+                if (value.includes('[')){
+                    console.log("optgrps")
+                    // Use regular expression to match values inside square brackets and split them into arrays
+                    const regex = /\[(.*?)\]/g;
+                    const matches = value.match(regex);
+                    if (matches !== null) {
+                        value = matches.map(item => {
+                            const optionParts = item.slice(1, -1).split(',').map(str => str.trim());
+                            return [optionParts[0], optionParts[1]];
+                        });
+                    } else {
+                        value = [];
+                    } 
+                } else{
+                    console.log(value);
+                    value = value.split(',').map(str => str.trim());
+                    console.log("no optgrps");
+                } 
+                params[key] = value;
+            } else {
+                params[key] = value;  
+            }
+        });
+        console.log(params);
+        console.log(modal_title.text().toLowerCase().replace(/ /g, ''));
+        getFormElement(modal_title.text().toLowerCase().replace(/ /g, ''), params).then(function (formElem){
+            addHTMLToGrid(document.getElementById('row').value , document.getElementById('column').value, formElem["html"]);
+        });
+    });
+});
+
+// Function to add a new row when the "plus" button is clicked
+function addNewRow() {
+    var newRow = '<div class="rowGrid" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
+        '<div class="itemsContainer">' +
+        '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
+        '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
+        '</div></div>' +
+        '<div class="col-plus-button" onclick="addNewColumn(this.parentNode)">+</div>'+
+        '</div>';
+    document.getElementById("form-fields").insertBefore(createFragment(newRow), document.querySelector('.plus-button-container'));
+}
+
+// Function to add a new column when the "plus" button is clicked
+function addNewColumn(row) {
+    var newColumn = '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
+        '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
+        '</div>';
+    var items = row.getElementsByClassName('item');
+    var itemsContainer = row.querySelector('.itemsContainer');
+    itemsContainer.insertAdjacentHTML('beforeend', newColumn);
+}
+
+// Function to create an HTML element from a string
+function createFragment(htmlStr) {
+    var template = document.createElement('template');
+    template.innerHTML = htmlStr.trim();
+    return template.content.firstChild;
+}
+
+// Function to append user-provided HTML above the "plus" button
+function addHTMLToGrid(row, col, htmlCode) {
+    var rowGrid = document.getElementById("form-fields").getElementsByClassName("rowGrid")[row - 1];
+    var colGrid = rowGrid.getElementsByClassName('item')[col - 1];
+    colGrid.innerHTML = htmlCode + '<div class="delete-button" onclick="deleteCell(this)">x</div>';
+    // Remove highlighted-item class from the selected cell
+    colGrid.classList.remove('highlighted-item');
+}
+
+// Function to delete the cell when the delete button is clicked
+function deleteCell(button) {
+    var item = button.closest('.item');
+    var row = item.closest('.rowGrid');
+    var cells = row.getElementsByClassName('item');
+
+    // If the row contains only one cell (excluding the "add column" button), remove the entire row
+    if (cells.length === 1) {
+        row.remove();
+    } else {
+        item.remove();
+    }
+}
+let draggedItem = null;
+
+function dragStart(event) {
+    const target = event.target;
+    if (target.classList.contains('item')) {
+        draggedItem = target;
+        event.dataTransfer.effectAllowed = 'move';
+    } else {
+        event.preventDefault(); // Prevent dragging the plus button or any other non-item element
+    }
+}
+
+function dragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+}
+
+function dragEnter(event) {
+    event.target.classList.add('drag-over');
+}
+
+function dragLeave(event) {
+    event.target.classList.remove('drag-over');
+}
+
+function drop(event) {
+    event.preventDefault();
+    const target = event.target.closest('.item');
+    if (target && draggedItem) {
+        const tempHTML = draggedItem.innerHTML;
+        draggedItem.innerHTML = target.innerHTML;
+        target.innerHTML = tempHTML;
+    }
+    event.target.classList.remove('drag-over');
+}
+
+function dragEnd() {
+    draggedItem = null;
+}
+// Add event listeners to the document for drag and drop functionality
+document.addEventListener('dragover', dragOver);
+document.addEventListener('dragenter', dragEnter);
+document.addEventListener('dragleave', dragLeave);
+document.addEventListener('drop', drop);
+document.addEventListener('dragend', dragEnd);
+
+function generateModalBody(buttonType, properties){
+    var modalBodyHTML = "";
+    types = ["color", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number",
+                "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week"];
+    // Generate modal body HTML
+    for (var i = 0; i < properties.length; i++) {
+        var property = properties[i];
+        if (buttonType == 'button' && property == 'type') {
+            modalBodyHTML += '<div class="form-group row">' +
+                '<label class="col-sm-4 col-form-label">Type:</label>' +
+                '<div class="col-sm-8">' +
+                '<select name="type" id="bType" class="form-select">' +
+                '<option value="button">Button</option><option value="submit">Submit</option><option value="reset">Reset</option></select>' +
+                '</div></div>';
+        } else if (buttonType == 'input' && property == 'type') {
+            var options = "";
+            for (var i = 0; i < types.length; i++) {
+                options += '<option value="' + types[i] + '">' + types[i] + '</option>'
+            }
+            modalBodyHTML += '<div class="form-group row">' +
+                '<label class="col-sm-4 col-form-label">Type:</label>' +
+                '<div class="col-sm-8">' +
+                '<select name="type" id="iType" class="form-select">' + options + '</select></div></div>';
+        } else { // text fields
+            modalBodyHTML += '<div class="form-group row">' +
+                '<label for="' + property + '" class="col-sm-4 col-form-label">' + property.charAt(0).toUpperCase() + property.slice(1) + ':</label>' +
+                '<div class="col-sm-8">' + '<input type="text" class="form-control" name="'+ property + '" id="' + property + '"></div></div>';
+        }
+    }
+
+    // Get number of rows from #form-fields div
+    var rows = document.getElementById('form-fields').getElementsByClassName('rowGrid').length - 1;
+    // Add row dropdown selection to modal body
+    modalBodyHTML += '<div class="form-group row">' +
+        '<label for="row" class="col-sm-4 col-form-label">Row:</label>' +
+        '<div class="col-sm-8">' +
+        '<select name="row" id="row" class="form-select" onchange="detectRowChange(this)">';
+    modalBodyHTML += '<option id="default-row" value="">Choose a row</option>';
+    for (var i = 1; i <= rows; i++) {
+        modalBodyHTML += '<option value="' + i + '">' + i + '</option>';
+    }
+    modalBodyHTML += '</select></div></div>';
+
+    // Add column dropdown selection to modal body
+    modalBodyHTML += '<div class="form-group row">' +
+        '<label for="column" class="col-sm-4 col-form-label">Column:</label>' +
+        '<div class="col-sm-8">' +
+        '<select name="column" id="column" class="form-select" onchange="detectColChange(this)">' +
+        '<option id="default-col" value="">Choose a column</option>' +
+        '</select></div></div>';
+
+    return modalBodyHTML;
+}
+
+function detectRowChange(sel) {
+    // Get number of columns in the row
+    var cols = document.getElementById('form-fields').getElementsByClassName('rowGrid')[sel.value - 1].getElementsByClassName('item').length;
+    // Add column dropdown options to modal body
+    $('#column').empty();
+    $('#column').append('<option id="default-col" value="">Choose a column</option>');
+    for (var i = 1; i <= cols; i++) {
+        $('#column').append('<option value="' + i + '">' + i + '</option>');
+    }
+    // Remove default row option
+    $('#default-row').remove();
+}
+
+function detectColChange(column) {
+    // Remove default col option
+    $('#default-col').remove();
+    // Get row and column number
+    const row = document.getElementById('row').value;
+    const col = column.value;
+    var rowGrid = document.getElementById("form-fields").getElementsByClassName("rowGrid")[row - 1];
+    var colGrid = rowGrid.getElementsByClassName('item')[col - 1];
+    // Add highlighted-item class to the selected cell
+    colGrid.classList.add('highlighted-item');
+}
+
+// function to call api for element json data with input type as parameter
+function getFormElement(tag, params) {
+    // Return form element after GET request succeeds
+    return new Promise(function (resolve, reject) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var res = JSON.parse(this.responseText);
+                console.log(res);
+                resolve(res);
+            }
+        };
+        // API route
+        xhttp.open("POST", "/form-components/" + tag, true);
+        xhttp.setRequestHeader('Content-type', 'application/json')
+        xhttp.send(JSON.stringify(params));
+    });
+}
+</script>
+<?= $this->endSection() ?>

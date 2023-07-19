@@ -1,0 +1,135 @@
+.item3 {
+    position:relative;
+    grid-area: main;
+    background-color: #fff;
+    padding: 20px;
+    overflow: auto;
+}
+
+.item4 {
+    grid-area: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;grid-area: right;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    grid-template-areas:'main right';
+    gap: 10px;
+    background-color: #2196F3;
+    padding: 10px;
+}
+
+.grid-container>div {
+    background-color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    padding: 20px 0;
+    font-size: 20px;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.rowGrid {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px;
+    padding-left: 10px;
+    overflow: hidden;
+}
+
+.itemsContainer {
+    width: 90%;
+    display: flex;
+}
+
+.item {
+    position: relative;
+    padding: 10px;
+    min-height: 30px;
+    margin: 2px;
+    flex-grow: 1; /* Allow the columns to resize within the itemsContainer */
+    transition: background-color 0.2s;
+    background-color: white;
+}
+
+.col-plus-button {
+    width: 10%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: bold;
+    width: 50px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: #2196F3;
+    color: white;
+    margin-right:5px;
+}
+
+.plus-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    padding: 5px;
+    flex-direction: column;
+}
+
+.plus-button{
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    width: 150px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: #2196F3;
+    color: white;
+}
+
+.delete-button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: grey;
+    display: none;
+}
+
+.item:hover:not(.plus-button-container) {
+    background-color: gainsboro; /* Change the background color on hover */
+}
+
+.item:hover .delete-button {
+    display: block; /* Show the delete button on hover */
+}
+
+.drag-over {
+    background-color: gainsboro; /* Set the desired background color for the drop target */
+}
+
+.modal-dialog {
+    opacity: 0.9;
+}
+
+.highlighted-item {
+    -webkit-box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    -moz-box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}

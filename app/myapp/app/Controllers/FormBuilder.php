@@ -21,9 +21,7 @@ class FormBuilder extends BaseController
     {
         // Clear the form ID from the session to ensure form builder starts fresh
         $_SESSION['form_id'] = null;
-        return view('templates/header', ['subheading' => 'New Form'])
-        .view('FormBuilder/form_builder', ['form' => null])
-        .view('templates/footer');
+        return view('FormBuilder/form_builder', ['form' => null]);
     }
 
     public function saveForm()
@@ -71,8 +69,6 @@ class FormBuilder extends BaseController
             'form' => $decrypted_data,
         ];
 
-        return view('templates/header', ['subheading' => 'Edit Form'])
-        .view('FormBuilder/form_builder', $data)
-        .view('templates/footer');
+        return view('FormBuilder/form_builder', $data);
     }
 }
