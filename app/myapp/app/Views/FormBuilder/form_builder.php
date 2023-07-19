@@ -98,12 +98,36 @@ $(document).ready(function () {
         modal_body.find('input, select').each(function () {
             var key = $(this).attr('name');
             var value = $(this).val();
-             // Check if the property is "options" and if so, convert it to an array
-            if (key === 'options') {
-                value = value.split(',').map(option => option.trim());
-            }
 
-            params[key] = value;
+            // Modify value for 'optgroups' and 'options' fields
+            if (key == 'optgroups') {
+                if (value != ''){
+                    value = value.split(',').map(str => str.trim());
+                    params[key] = value;
+                }
+            } else if (key == 'options') {
+                if (value.includes('[')){
+                    console.log("optgrps")
+                    // Use regular expression to match values inside square brackets and split them into arrays
+                    const regex = /\[(.*?)\]/g;
+                    const matches = value.match(regex);
+                    if (matches !== null) {
+                        value = matches.map(item => {
+                            const optionParts = item.slice(1, -1).split(',').map(str => str.trim());
+                            return [optionParts[0], optionParts[1]];
+                        });
+                    } else {
+                        value = [];
+                    } 
+                } else{
+                    console.log(value);
+                    value = value.split(',').map(str => str.trim());
+                    console.log("no optgrps");
+                } 
+                params[key] = value;
+            } else {
+                params[key] = value;  
+            }
         });
         console.log(params);
         console.log(modal_title.text().toLowerCase().replace(/ /g, ''));
