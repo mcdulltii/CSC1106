@@ -110,10 +110,23 @@ $(document).ready(function () {
 // Function to add a new row when the "plus" button is clicked
 function addNewRow() {
     var newRow = '<div class="rowGrid">' +
-        '<div class="item"></div>' + 
-        '<div class="delete-button" onclick="deleteRow(this)">x</div>' +
+        '<div class="itemsContainer">' +
+        '<div class="item">' +
+        '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
+        '</div></div>' +
+        '<div class="col-plus-button" onclick="addNewColumn(this.parentNode)">+</div>'+
         '</div>';
     document.getElementById("form-fields").insertBefore(createFragment(newRow), document.querySelector('.plus-button-container'));
+}
+
+// Function to add a new column when the "plus" button is clicked
+function addNewColumn(row) {
+    var newColumn = '<div class="item">' +
+        '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
+        '</div>';
+    var items = row.getElementsByClassName('item');
+    var itemsContainer = row.querySelector('.itemsContainer');
+    itemsContainer.insertAdjacentHTML('beforeend', newColumn);
 }
 
 // Function to create an HTML element from a string
@@ -126,17 +139,22 @@ function createFragment(htmlStr) {
 // Function to append user-provided HTML above the "plus" button
 function appendHTMLToGrid(htmlCode) {
     var newRow = '<div class="rowGrid">' +
-        '<div class="item">' + htmlCode + '</div>' +
-        '<div class="delete-button" onclick="deleteRow(this)">x</div>' + 
+        '<div class="itemsContainer">' +
+        '<div class="item">' + htmlCode +
+        '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
+        '</div></div>' +
+        '<div class="col-plus-button" onclick="addNewColumn(this.parentNode)">+</div>'+
         '</div>';
         document.getElementById("form-fields").insertBefore(createFragment(newRow), document.querySelector('.plus-button-container'));
 }
 
-// Function to delete the row when the delete button is clicked
-function deleteRow(button) {
-    var rowGrid = button.closest('.rowGrid');
-    rowGrid.remove();
+// Function to delete the cell when the delete button is clicked
+function deleteCell(button) {
+    var item = button.closest('.item');
+    item.remove();
 }
+
+
 
 function generateModalBody(buttonType, properties){
         var modalBodyHTML = "";

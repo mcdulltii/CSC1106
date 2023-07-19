@@ -1,3 +1,4 @@
+// addField({'row':1, 'col':1, 'html':'<p>hi</p>'})
 // function to add field to form-fields div
 // accepts fieldData object with label html, type html, row and col properties
 function addField(fieldData) {
