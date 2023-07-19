@@ -26,6 +26,7 @@ class FormFieldset extends BaseComponent
 
     function render($legend = '', $attrs = array())
     {
+        $this->setAttribute('id', 'fieldset_' . $this->count);
         if ($attrs) {
             foreach ($attrs as $name => $value) {
                 if (in_array($name, $this->booleanAttributes))
@@ -35,7 +36,7 @@ class FormFieldset extends BaseComponent
             }
         }
 
-        $this->setHtml('<fieldset ' . 'id= "' . $this->count . '"');
+        $this->setHtml('<fieldset ');
         foreach ($this->getAttribute() as $name => $value) {
             if (in_array($name, $this->booleanAttributes))
                 $this->setHtml(' ' . $name);
