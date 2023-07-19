@@ -12,22 +12,32 @@
 <div id='pageMessages'></div>
 
 <script>
+// Add a default row to the grid
+addNewRow();
+
 // If the form variable is set, we are editing an existing form
 // Else, do nothing as we are creating a new form
 if(<?= isset($form) ? 'true' : 'false' ?>){
     // Parse the form variable into a JSON object
     formData = JSON.parse(<?= json_encode($form, JSON_UNESCAPED_UNICODE); ?>);
-    console.log(formData);
-    // Iterate thtough the json object and add each field to the form
+    // Build grid layout from formData
     for (var i = 0; i < formData.length; i++) {
-        addField(formData[i]);
+        var row = formData[i].row + 1;
+        var col = formData[i].column + 1;
+        var html = formData[i].html;
+        // Add row if it doesn't exist
+        if (document.getElementById('form-fields').getElementsByClassName('rowGrid').length - 1 < row) {
+            addNewRow();
+        }
+        // Add column in row if it doesn't exist
+        if (document.getElementById('form-fields').getElementsByClassName('rowGrid')[row - 1].getElementsByClassName('item').length < col) {
+            addNewColumn(document.getElementById('form-fields').getElementsByClassName('rowGrid')[row - 1]);
+        }
+        addHTMLToGrid(row, col, html);
     }
 }
 
 $(document).ready(function () {
-    // Add a default row to the grid
-    addNewRow();
-
     // Form fields array
     const form_fields = [
         { type: 'button', label: 'Button', properties: ['type', 'value'] },
@@ -74,7 +84,6 @@ $(document).ready(function () {
 
             // Add click event to button
             button.click(function () {
-
                 var button_type = field.type;
                 var properties = field.properties;
                 var modalBodyHTML = generateModalBody(button_type, properties);
@@ -91,6 +100,8 @@ $(document).ready(function () {
             });
         })(form_fields[i]);
     }
+    // Add save form button
+    $("#form-fields-buttons").append('<div class="w-100"><button type="button" class="btn btn-primary" id="save-form">Save</button></div>')
 
     // Add button click event
     modal_add_button.click(function () {
@@ -118,21 +129,66 @@ $(document).ready(function () {
                         });
                     } else {
                         value = [];
-                    } 
+                    }
                 } else{
                     console.log(value);
                     value = value.split(',').map(str => str.trim());
                     console.log("no optgrps");
-                } 
+                }
                 params[key] = value;
             } else {
-                params[key] = value;  
+                params[key] = value;
             }
         });
         console.log(params);
         console.log(modal_title.text().toLowerCase().replace(/ /g, ''));
         getFormElement(modal_title.text().toLowerCase().replace(/ /g, ''), params).then(function (formElem){
-            addHTMLToGrid(document.getElementById('row').value , document.getElementById('column').value, formElem["html"]);
+            addHTMLToGrid(document.getElementById('row').value, document.getElementById('column').value, formElem["html"]);
+        });
+    });
+
+    // Save form button click event
+    $("#save-form").click(function (e) {
+        e.preventDefault();
+
+        // Convert div of divs from #form-fields div into a JSON object
+        var grid = document.getElementById("form-fields").getElementsByClassName("rowGrid");
+        var form = [];
+        for (var i = 0; i < grid.length; i++) {
+            var row = grid[i].getElementsByClassName("item");
+            for (var j = 0; j < row.length; j++) {
+                var cell = row[j];
+                // Replace delete button div with empty string
+                var html = cell.innerHTML.replace(/<div class="delete-button" onclick="deleteCell\(this\)">x<\/div>/g, '');
+                form.push({ 'row': i, 'column': j, 'html': html });
+            }
+        }
+
+        // Send the form data to the server
+        fetch('/form/save', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({'formData': JSON.stringify(form)})
+        })
+        .then(response => {
+            if (response.ok) {
+                createAlert('','Form saved successfully','','success',true,true,'pageMessages');
+
+                // Redirect to home if we are creating a new form
+                if(<?= !isset($form) ? 'true' : 'false' ?>){
+                    location.href = '<?= base_url('/') ?>';
+                }
+            }
+            else{
+                createAlert('Opps!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            createAlert('Opps!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
         });
     });
 });
