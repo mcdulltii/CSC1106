@@ -109,9 +109,9 @@ $(document).ready(function () {
 
 // Function to add a new row when the "plus" button is clicked
 function addNewRow() {
-    var newRow = '<div class="rowGrid">' +
+    var newRow = '<div class="rowGrid" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
         '<div class="itemsContainer">' +
-        '<div class="item">' +
+        '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
         '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
         '</div></div>' +
         '<div class="col-plus-button" onclick="addNewColumn(this.parentNode)">+</div>'+
@@ -121,7 +121,7 @@ function addNewRow() {
 
 // Function to add a new column when the "plus" button is clicked
 function addNewColumn(row) {
-    var newColumn = '<div class="item">' +
+    var newColumn = '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
         '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
         '</div>';
     var items = row.getElementsByClassName('item');
@@ -140,7 +140,7 @@ function createFragment(htmlStr) {
 function appendHTMLToGrid(htmlCode) {
     var newRow = '<div class="rowGrid">' +
         '<div class="itemsContainer">' +
-        '<div class="item">' + htmlCode +
+        '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' + htmlCode +
         '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
         '</div></div>' +
         '<div class="col-plus-button" onclick="addNewColumn(this.parentNode)">+</div>'+
@@ -154,7 +154,51 @@ function deleteCell(button) {
     item.remove();
 }
 
+let draggedItem = null;
 
+function dragStart(event) {
+    const target = event.target;
+    if (target.classList.contains('item')) {
+        draggedItem = target;
+        event.dataTransfer.effectAllowed = 'move';
+    } else {
+        event.preventDefault(); // Prevent dragging the plus button or any other non-item element
+    }
+}
+
+function dragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+}
+
+function dragEnter(event) {
+    event.target.classList.add('drag-over');
+}
+
+function dragLeave(event) {
+    event.target.classList.remove('drag-over');
+}
+
+function drop(event) {
+    event.preventDefault();
+    const target = event.target.closest('.item');
+    if (target && draggedItem) {
+        const tempHTML = draggedItem.innerHTML;
+        draggedItem.innerHTML = target.innerHTML;
+        target.innerHTML = tempHTML;
+    }
+    event.target.classList.remove('drag-over');
+}
+
+function dragEnd() {
+    draggedItem = null;
+}
+// Add event listeners to the document for drag and drop functionality
+document.addEventListener('dragover', dragOver);
+document.addEventListener('dragenter', dragEnter);
+document.addEventListener('dragleave', dragLeave);
+document.addEventListener('drop', drop);
+document.addEventListener('dragend', dragEnd);
 
 function generateModalBody(buttonType, properties){
         var modalBodyHTML = "";

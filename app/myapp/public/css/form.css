@@ -119,3 +119,8 @@ table {
 .item:hover .delete-button {
     display: block; /* Show the delete button on hover */
 }
+
+.drag-over {
+    background-color: gainsboro; /* Set the desired background color for the drop target */
+}
+
