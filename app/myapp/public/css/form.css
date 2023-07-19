@@ -1,16 +1,22 @@
 .item3 {
     grid-area: main;
+    background-color: #fff;
+    padding: 20px;
+    overflow: auto;
 }
 
 .item4 {
     grid-area: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;grid-area: right;
 }
 
 .grid-container {
     display: grid;
     grid-template-columns: 4fr 1fr;
-    grid-template-areas:
-        'main right';
+    grid-template-areas:'main right';
     gap: 10px;
     background-color: #2196F3;
     padding: 10px;
@@ -27,4 +33,60 @@ table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
+}
+
+.rowGrid {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    padding: 5px; 
+    transition: background-color 0.2s; 
+}
+
+.item {
+    padding: 10px;
+}
+
+.plus-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent; 
+    border: none; 
+    padding: 5px; 
+}
+
+.plus-button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    width: 150px;
+    height: 30px; 
+    border-radius: 15px;
+    background-color: #2196F3; 
+    color: white; 
+}
+
+.delete-button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: grey;
+    display: none; 
+}
+
+.rowGrid:hover:not(.plus-button-container) {
+    background-color: gainsboro; /* Change the background color on hover */
+}
+
+.rowGrid:hover .delete-button {
+    display: block; /* Show the delete button on hover */
 }
