@@ -29,16 +29,11 @@ class LoginController extends BaseController
             return view('login');
         }
 
-        $data = [
-            'user_name' => $post['username'],
-            'user_password_hash' => password_hash($post['password'], PASSWORD_DEFAULT)
-        ];
-
-        if ($data['user_password_hash'] === $model->getUserPasswordHash($data['user_name']))
+        if (password_verify($post['password'], $model->getUserPasswordHash($post['username'])))
         {
             $session = \Config\Services::session();
             // Set the user ID
-            $session->set('user_id', $model->getUserID($data['user_name']));
+            $session->set('user_id', $model->getUserID($post['username']));
 
             return redirect('/', 'refresh');
         } else {
