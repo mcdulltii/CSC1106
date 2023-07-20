@@ -43,6 +43,10 @@ class FormComponent extends BaseController
             'attributes' => '',
         ];
 
+        if (!isset($json['label']))
+            return $this->setResponseFormat('json')
+                ->fail('\'label\' value is required');
+
         if (isset($json['type']) && $component->check_supported($json['type'])) {
             if (isset($json['datalist']))
                 if ($component->check_opts($json['datalist']) == '')
@@ -97,6 +101,10 @@ class FormComponent extends BaseController
                 )
             )
         );
+
+        if (!isset($json['label']))
+            return $this->setResponseFormat('json')
+                ->fail('\'label\' value is required');
 
         if (isset($json['optgroups']) && isset($json['options'])) {
             if (
