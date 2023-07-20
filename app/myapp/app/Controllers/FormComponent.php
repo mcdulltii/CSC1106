@@ -266,10 +266,10 @@ class FormComponent extends BaseController
         if (isset($json['heading']) && $component->check_supported($json['heading'])) {
             if (!isset($json['text']))
                 return $this->setResponseFormat('json')
-                    ->fail('Text value is required');
+                    ->fail('\'text\' is required');
         } else {
             return $this->setResponseFormat('json')
-                ->fail('Text heading is not supported');
+                ->fail('\'heading\' is not supported');
         }
 
         $data['html'] = $component->render(

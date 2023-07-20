@@ -4,6 +4,8 @@ namespace App\Libraries\FormComponents;
 
 class FormText extends BaseComponent
 {
+    protected $count;
+
     function __construct()
     {
         parent::__construct();
@@ -28,7 +30,7 @@ class FormText extends BaseComponent
     {
         $form_name = $type . '_' . $this->count;
         $this->setAttribute('id', $form_name);
-        $this->setHtml('<' . $heading . ' for="' . $form_name . '"');
+        $this->setHtml('<' . $heading);
 
         foreach ($this->getAttribute() as $name => $value) {
             $this->setHtml(' ' . $name . '="' . $value . '"');
