@@ -2,29 +2,51 @@
 
 <?= $this->section('body') ?>
 <div class="grid-container" id="form-builder">
-    <div class="item3">
-        <div id="form-fields" class="container h-100"></div>
+    <div id="form-fields" class="item3">
+        <div class="rowGrid plus-button-container">
+            <div class="plus-button" onclick="addNewRow()">+</div>
+        </div>
     </div>
     <div id="form-fields-buttons" class="item4"></div>
 </div>
 <div id='pageMessages'></div>
 
 <script>
+// Add a default row to the grid
+addNewRow();
+
 // If the form variable is set, we are editing an existing form
 // Else, do nothing as we are creating a new form
 if(<?= isset($form) ? 'true' : 'false' ?>){
     // Parse the form variable into a JSON object
     formData = JSON.parse(<?= json_encode($form, JSON_UNESCAPED_UNICODE); ?>);
-    console.log(formData);
-    // Iterate thtough the json object and add each field to the form
+    // Build grid layout from formData
     for (var i = 0; i < formData.length; i++) {
-        addField(formData[i]);
+        var row = formData[i].row + 1;
+        var col = formData[i].column + 1;
+        var html = formData[i].html;
+        // Add row if it doesn't exist
+        if (document.getElementById('form-fields').getElementsByClassName('rowGrid').length - 1 < row) {
+            addNewRow();
+        }
+        // Add column in row if it doesn't exist
+        if (document.getElementById('form-fields').getElementsByClassName('rowGrid')[row - 1].getElementsByClassName('item').length < col) {
+            addNewColumn(document.getElementById('form-fields').getElementsByClassName('rowGrid')[row - 1]);
+        }
+        addHTMLToGrid(row, col, html);
     }
 }
 
 $(document).ready(function () {
     // Form fields array
-    const form_fields = ['Button', 'Fieldset', 'Input', 'Label', 'Select', 'Textarea'];
+    const form_fields = [
+        { type: 'button', label: 'Button', properties: ['type', 'value'] },
+        { type: 'fieldset', label: 'Fieldset', properties: ['legend'] }, //to change FormFieldset.php?
+        { type: 'input', label: 'Input', properties: ['label', 'type', 'datalist'] },
+        { type: 'label', label: 'Label', properties: ['form_name', 'value'] },
+        { type: 'select', label: 'Select', properties: ['label','options','optgroups'] },
+        { type: 'textarea', label: 'Text Area', properties: ['label', 'type'] }
+    ];
 
     // Create modal
     var modal = $("<div class='modal fade' id='form-fields-modal' tabindex='-1' role='dialog' aria-labelledby='form-fields-modal-label' aria-hidden='true'></div>");
@@ -32,10 +54,10 @@ $(document).ready(function () {
     var modal_content = $("<div class='modal-content'></div>");
     var modal_header = $("<div class='modal-header'></div>");
     var modal_title = $("<h5 class='modal-title' id='form-fields-modal-label'></h5>");
-    var modal_close_button = $("<button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>");
+    var modal_close_button = $("<button type='button' class='close' data-bs-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>");
     var modal_body = $("<div class='modal-body'></div>");
     var modal_footer = $("<div class='modal-footer'></div>");
-    var modal_add_button = $("<button type='button' class='btn btn-primary' data-dismiss='modal'>Add</button>");
+    var modal_add_button = $("<button type='button' class='btn btn-primary' data-bs-dismiss='modal' id='modal-add-button'>Add</button>");
 
     // Append modal elements to modal
     modal_header.append(modal_title);
@@ -52,192 +74,95 @@ $(document).ready(function () {
 
     // Iterate form_fields to add buttons into #form-fields-buttons div, and add click event to each button to open a modal
     for (var i = 0; i < form_fields.length; i++) {
-        // Create button
-        var button = $("<button class='btn btn-secondary w-100 my-1' data-toggle='modal' data-target='#form-fields-modal'>" + form_fields[i] + "</button>");
+        (function(field) {
+            // Create button
+            button_label = field.label;
+            var button = $("<button class='btn btn-secondary w-100 my-1' data-toggle='modal' data-target='#form-fields-modal'>" + field.label + "</button>");
 
-        // Append button to #form-fields-buttons div
-        $("#form-fields-buttons").append(button);
+            // Append button to #form-fields-buttons div
+            $("#form-fields-buttons").append(button);
 
-        // Add click event to button
-        button.click(function () {
-            // Get button text
-            var button_text = $(this).text();
-
-            // Empty modal body
-            modal_body.empty();
-
-            // Switch case for button text
-            switch (button_text) {
-                case "Button":
-                    modal_body.append(""); // TODO
-                    break;
-                case "Fieldset":
-                    modal_body.append(""); // TODO
-                    break;
-                case "Input":
-                    modal_body.append(""); // TODO
-                    break;
-                case "Label":
-                    modal_body.append(""); // TODO
-                    break;
-                case "Select":
-                    modal_body.append(""); // TODO
-                    break;
-                case "Textarea":
-                    modal_body.append(""); // TODO
-                    break;
-                default:
+            // Add click event to button
+            button.click(function () {
+                var button_type = field.type;
+                var properties = field.properties;
+                var modalBodyHTML = generateModalBody(button_type, properties);
+                if (button_type){
+                    modal_body.empty();
+                    modal_body.append(modalBodyHTML);
+                } else{
                     modal_body.append("<p>Something went wrong</p>");
-            }
+                }
 
-            // Show modal
-            modal_title.text(button_text);
-            $("#form-fields-modal").modal('show');
-        });
+                // Show modal
+                modal_title.text(field.label);
+                $("#form-fields-modal").modal('show');
+            });
+        })(form_fields[i]);
     }
+    // Add save form button
+    $("#form-fields-buttons").append('<div class="w-100"><button type="button" class="btn btn-primary" id="save-form">Save</button></div>')
 
-    // Add field button click event
-    $("#add-field").click(function () {
-        // get value from row, column label and input type inputs
-        var row = $("#row-input").val();
-        var col = $("#col-input").val();
-        var label = $("#label-input").val();
-        var type = $("#type-input").val();
+    // Add button click event
+    modal_add_button.click(function () {
+        var params = {};
+        modal_body.find('input, select').each(function () {
+            var key = $(this).attr('name');
+            var value = $(this).val();
 
-        var element_data;
-        // switch case for input type
-        // mock element data from api
-        switch (type) {
-            case "input":
-                var element_data = {
-                    "row": row,
-                    "col": col,
-                    "html": ""
-                };
-                // Temporary button type for input form element
-                getFormElement(label, type, "button").then(function (formElem) {
-                    element_data["html"] = formElem["html"];
-                    addField(element_data);
-                });
-                break;
-            case "textarea":
-                var element_data = {
-                    "row": row,
-                    "col": col,
-                    "html": ""
-                };
-                // Temporary button type for input form element
-                getFormElement(label, type).then(function (formElem) {
-                    element_data["html"] = formElem["html"];
-                    addField(element_data);
-                });
-                break;
-        }
-
-        // clear row and col input
-        $("#row-input").val("");
-        $("#col-input").val("");
-        $("#label-input").val("");
-    });
-
-    // Delete field button click event
-    $("#delete-field").click(function () {
-        // get value from row and column inputs
-        var row = $("#row-input").val();
-        var col = $("#col-input").val();
-
-        // get children elements of form-fields div
-        var rows = $("#form-fields").children();
-
-        // get child_row at index row
-        var child_row = rows.eq(row - 1);
-
-        // if child_row is undefined, do nothing
-        // else if row is greater than number of rows, do nothing
-        // else if row is less than 1, do nothing
-        // else remove child_row
-        if (child_row == undefined || child_row.length == 0) {
-            console.log("child row is undefined");
-        }
-        else if (row > rows.length) {
-            console.log("row is greater than child row length");
-        }
-        else if (row < 1) {
-            console.log("row is less than 1");
-        }
-        else {
-            console.log("row is defined");
-
-            // get children elements of child_row
-            var cols = child_row.children();
-
-            // get child_col at index col
-            var child_col = cols.eq(col - 1);
-
-            // if child_col is undefined, do nothing
-            // else if col is greater than number of cols, do nothing
-            // else if col is less than 1, do nothing
-            // else remove child_col
-            if (child_col == undefined || child_col.length == 0) {
-                console.log("child col is undefined");
+            // Modify value for 'optgroups' and 'options' fields
+            if (key == 'optgroups') {
+                if (value != ''){
+                    value = value.split(',').map(str => str.trim());
+                    params[key] = value;
+                }
+            } else if (key == 'options') {
+                if (value.includes('[')){
+                    console.log("optgrps")
+                    // Use regular expression to match values inside square brackets and split them into arrays
+                    const regex = /\[(.*?)\]/g;
+                    const matches = value.match(regex);
+                    if (matches !== null) {
+                        value = matches.map(item => {
+                            const optionParts = item.slice(1, -1).split(',').map(str => str.trim());
+                            return [optionParts[0], optionParts[1]];
+                        });
+                    } else {
+                        value = [];
+                    }
+                } else{
+                    console.log(value);
+                    value = value.split(',').map(str => str.trim());
+                    console.log("no optgrps");
+                }
+                params[key] = value;
+            } else {
+                params[key] = value;
             }
-            else if (col > cols.length) {
-                console.log("col is greater than child col length");
-            }
-            else if (col < 1) {
-                console.log("col is less than 1");
-            }
-            else {
-                console.log("col is defined");
-                child_col.remove();
-            }
-        }
-
-        // clear row and col input
-        $("#row-input").val("");
-        $("#col-input").val("");
-        $("#label-input").val("");
+        });
+        console.log(params);
+        console.log(modal_title.text().toLowerCase().replace(/ /g, ''));
+        getFormElement(modal_title.text().toLowerCase().replace(/ /g, ''), params).then(function (formElem){
+            addHTMLToGrid(document.getElementById('row').value, document.getElementById('column').value, formElem["html"]);
+        });
     });
 
     // Save form button click event
     $("#save-form").click(function (e) {
         e.preventDefault();
 
-        var formJson = []
-
-        // get form-fields children
-        var rows = $("#form-fields").children();
-
-        // iterate through rows and col
-        rows.each(function (index) {
-            // get row children
-            var cols = $(this).children();
-
-            // iterate through cols
-            cols.each(function (index) {
-
-                // get input and label element html
-                var input = $(this).find("input").prop("outerHTML");
-                var label = $(this).find("label").prop("outerHTML");
-
-                // create field object with the input and label html and row and column index
-                var field = {
-                    "label": label,
-                    "input": input,
-                    "row": $(this).parent().index() + 1,
-                    "col": index + 1
-                };
-
-                // push field object to formJson array
-                formJson.push(field);
-            });
-        });
-
-        console.log(formJson);
-
-        var formData = JSON.stringify({
-            'formData': JSON.stringify(formJson),
-        });
+        // Convert div of divs from #form-fields div into a JSON object
+        var grid = document.getElementById("form-fields").getElementsByClassName("rowGrid");
+        var form = [];
+        for (var i = 0; i < grid.length; i++) {
+            var row = grid[i].getElementsByClassName("item");
+            for (var j = 0; j < row.length; j++) {
+                var cell = row[j];
+                // Replace delete button div with empty string
+                var html = cell.innerHTML.replace(/<div class="delete-button" onclick="deleteCell\(this\)">x<\/div>/g, '');
+                form.push({ 'row': i, 'column': j, 'html': html });
+            }
+        }
 
         // Send the form data to the server
         fetch('/form/save', {
@@ -246,12 +171,10 @@ $(document).ready(function () {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: formData
+            body: JSON.stringify({'formData': JSON.stringify(form)})
         })
         .then(response => {
-            console.log(response);
-
-            if(response.ok){
+            if (response.ok) {
                 createAlert('','Form saved successfully','','success',true,true,'pageMessages');
 
                 // Redirect to home if we are creating a new form
@@ -270,56 +193,184 @@ $(document).ready(function () {
     });
 });
 
-// function to add field to form-fields div
-// accepts fieldData object with label html, type html, row and col properties
-function addField(fieldData) {
-    // Convert div of divs from #form-fields into an array of arrays
-    var rows = Array.from($("#form-fields").children()).map(function (row) {
-        return Array.from($(row).children());
-    });
+// Function to add a new row when the "plus" button is clicked
+function addNewRow() {
+    var newRow = '<div class="rowGrid" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
+        '<div class="itemsContainer">' +
+        '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
+        '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
+        '</div></div>' +
+        '<div class="col-plus-button" onclick="addNewColumn(this.parentNode)">+</div>'+
+        '</div>';
+    document.getElementById("form-fields").insertBefore(createFragment(newRow), document.querySelector('.plus-button-container'));
+}
 
-    // If the row property of fieldData is greater than the number of divs in #form-fields, add divs until the number of divs in #form-fields is equal to the row property of fieldData
-    if (fieldData["row"] > rows.length) {
-        for (var i = 0; i < fieldData["row"]; i++) {
-            // Create row div
-            var row = $("<div class='col-sm border border-dark h-100'></div>");
+// Function to add a new column when the "plus" button is clicked
+function addNewColumn(row) {
+    var newColumn = '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
+        '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
+        '</div>';
+    var items = row.getElementsByClassName('item');
+    var itemsContainer = row.querySelector('.itemsContainer');
+    itemsContainer.insertAdjacentHTML('beforeend', newColumn);
+}
 
-            // Append row div to #form-fields div
-            rows.push(row);
-        }
+// Function to create an HTML element from a string
+function createFragment(htmlStr) {
+    var template = document.createElement('template');
+    template.innerHTML = htmlStr.trim();
+    return template.content.firstChild;
+}
+
+// Function to append user-provided HTML above the "plus" button
+function addHTMLToGrid(row, col, htmlCode) {
+    var rowGrid = document.getElementById("form-fields").getElementsByClassName("rowGrid")[row - 1];
+    var colGrid = rowGrid.getElementsByClassName('item')[col - 1];
+    colGrid.innerHTML = htmlCode + '<div class="delete-button" onclick="deleteCell(this)">x</div>';
+    // Remove highlighted-item class from the selected cell
+    colGrid.classList.remove('highlighted-item');
+}
+
+// Function to delete the cell when the delete button is clicked
+function deleteCell(button) {
+    var item = button.closest('.item');
+    var row = item.closest('.rowGrid');
+    var cells = row.getElementsByClassName('item');
+
+    // If the row contains only one cell (excluding the "add column" button), remove the entire row
+    if (cells.length === 1) {
+        row.remove();
+    } else {
+        item.remove();
     }
+}
+let draggedItem = null;
 
-    // If the col property of fieldData is greater than the number of divs in the row property of fieldData, add divs until the number of divs in the row property of fieldData is equal to the col property of fieldData
-    if (fieldData["col"] > rows[fieldData["row"] - 1].length) {
-        for (var i = rows[fieldData["row"] - 1].length; i < fieldData["col"]; i++) {
-            // Create col div
-            var col = $("<div class='col-sm border border-dark h-100'></div>");
-
-            // Append col div to row div
-            rows[fieldData["row"] - 1].push(col);
-        }
-    }
-
-    // Place html property of fieldData in the col div at index col - 1 in the row div at index row - 1
-    rows[fieldData["row"] - 1][fieldData["col"] - 1].append(fieldData["html"]);
-
-    // Convert array of arrays back into div of divs and append to #form-fields div
-    $("#form-fields").empty();
-    for (var i = 0; i < rows.length; i++) {
-        var row = $("<div class='row border border-dark h-25'></div>");
-        for (var j = 0; j < rows[i].length; j++) {
-            row.append(rows[i][j]);
-        }
-        $("#form-fields").append(row);
+function dragStart(event) {
+    const target = event.target;
+    if (target.classList.contains('item')) {
+        draggedItem = target;
+        event.dataTransfer.effectAllowed = 'move';
+    } else {
+        event.preventDefault(); // Prevent dragging the plus button or any other non-item element
     }
 }
 
-// function to call api for element json data with input type as parameter
-function getFormElement(label, tag, type='') {
-    const params = {
-        label: label,
-        type: type
+function dragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+}
+
+function dragEnter(event) {
+    event.target.classList.add('drag-over');
+}
+
+function dragLeave(event) {
+    event.target.classList.remove('drag-over');
+}
+
+function drop(event) {
+    event.preventDefault();
+    const target = event.target.closest('.item');
+    if (target && draggedItem) {
+        const tempHTML = draggedItem.innerHTML;
+        draggedItem.innerHTML = target.innerHTML;
+        target.innerHTML = tempHTML;
     }
+    event.target.classList.remove('drag-over');
+}
+
+function dragEnd() {
+    draggedItem = null;
+}
+// Add event listeners to the document for drag and drop functionality
+document.addEventListener('dragover', dragOver);
+document.addEventListener('dragenter', dragEnter);
+document.addEventListener('dragleave', dragLeave);
+document.addEventListener('drop', drop);
+document.addEventListener('dragend', dragEnd);
+
+function generateModalBody(buttonType, properties){
+    var modalBodyHTML = "";
+    types = ["color", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number",
+                "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week"];
+    // Generate modal body HTML
+    for (var i = 0; i < properties.length; i++) {
+        var property = properties[i];
+        if (buttonType == 'button' && property == 'type') {
+            modalBodyHTML += '<div class="form-group row">' +
+                '<label class="col-sm-4 col-form-label">Type:</label>' +
+                '<div class="col-sm-8">' +
+                '<select name="type" id="bType" class="form-select">' +
+                '<option value="button">Button</option><option value="submit">Submit</option><option value="reset">Reset</option></select>' +
+                '</div></div>';
+        } else if (buttonType == 'input' && property == 'type') {
+            var options = "";
+            for (var i = 0; i < types.length; i++) {
+                options += '<option value="' + types[i] + '">' + types[i] + '</option>'
+            }
+            modalBodyHTML += '<div class="form-group row">' +
+                '<label class="col-sm-4 col-form-label">Type:</label>' +
+                '<div class="col-sm-8">' +
+                '<select name="type" id="iType" class="form-select">' + options + '</select></div></div>';
+        } else { // text fields
+            modalBodyHTML += '<div class="form-group row">' +
+                '<label for="' + property + '" class="col-sm-4 col-form-label">' + property.charAt(0).toUpperCase() + property.slice(1) + ':</label>' +
+                '<div class="col-sm-8">' + '<input type="text" class="form-control" name="'+ property + '" id="' + property + '"></div></div>';
+        }
+    }
+
+    // Get number of rows from #form-fields div
+    var rows = document.getElementById('form-fields').getElementsByClassName('rowGrid').length - 1;
+    // Add row dropdown selection to modal body
+    modalBodyHTML += '<div class="form-group row">' +
+        '<label for="row" class="col-sm-4 col-form-label">Row:</label>' +
+        '<div class="col-sm-8">' +
+        '<select name="row" id="row" class="form-select" onchange="detectRowChange(this)">';
+    modalBodyHTML += '<option id="default-row" value="">Choose a row</option>';
+    for (var i = 1; i <= rows; i++) {
+        modalBodyHTML += '<option value="' + i + '">' + i + '</option>';
+    }
+    modalBodyHTML += '</select></div></div>';
+
+    // Add column dropdown selection to modal body
+    modalBodyHTML += '<div class="form-group row">' +
+        '<label for="column" class="col-sm-4 col-form-label">Column:</label>' +
+        '<div class="col-sm-8">' +
+        '<select name="column" id="column" class="form-select" onchange="detectColChange(this)">' +
+        '<option id="default-col" value="">Choose a column</option>' +
+        '</select></div></div>';
+
+    return modalBodyHTML;
+}
+
+function detectRowChange(sel) {
+    // Get number of columns in the row
+    var cols = document.getElementById('form-fields').getElementsByClassName('rowGrid')[sel.value - 1].getElementsByClassName('item').length;
+    // Add column dropdown options to modal body
+    $('#column').empty();
+    $('#column').append('<option id="default-col" value="">Choose a column</option>');
+    for (var i = 1; i <= cols; i++) {
+        $('#column').append('<option value="' + i + '">' + i + '</option>');
+    }
+    // Remove default row option
+    $('#default-row').remove();
+}
+
+function detectColChange(column) {
+    // Remove default col option
+    $('#default-col').remove();
+    // Get row and column number
+    const row = document.getElementById('row').value;
+    const col = column.value;
+    var rowGrid = document.getElementById("form-fields").getElementsByClassName("rowGrid")[row - 1];
+    var colGrid = rowGrid.getElementsByClassName('item')[col - 1];
+    // Add highlighted-item class to the selected cell
+    colGrid.classList.add('highlighted-item');
+}
+
+// function to call api for element json data with input type as parameter
+function getFormElement(tag, params) {
     // Return form element after GET request succeeds
     return new Promise(function (resolve, reject) {
         var xhttp = new XMLHttpRequest();
