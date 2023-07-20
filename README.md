@@ -15,3 +15,7 @@ SIT CSC1106 (Web Programming) Assignment
     `./docker/migrate.sh`
 
 4. Access web server at `http://<domain>:8000`
+
+## Details
+
+More details regarding form components API in [README.md](app/myapp/app/Libraries/FormComponents/README.md)

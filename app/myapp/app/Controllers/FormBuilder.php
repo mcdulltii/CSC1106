@@ -10,7 +10,7 @@ class FormBuilder extends BaseController
 
     public function __construct()
     {
-        $encrypter = \Config\Services::encrypter();
+        $this->encrypter = \Config\Services::encrypter();
 
         $session = \Config\Services::session();
         // Set the user ID to 1 for now
@@ -21,9 +21,7 @@ class FormBuilder extends BaseController
     {
         // Clear the form ID from the session to ensure form builder starts fresh
         $_SESSION['form_id'] = null;
-        return view('templates/header')
-        .view('FormBuilder/form_builder', ['form' => null])
-        .view('templates/footer');
+        return view('FormBuilder/form_builder', ['form' => null]);
     }
 
     public function saveForm()
@@ -33,8 +31,8 @@ class FormBuilder extends BaseController
 
         $formModel = model(FormModel::class);
 
-        $encrypted_data = $encrypter->encrypt($jsonPayload->formData);
-        $compressed_data = gzcompress($encrypted_data, 9);
+        $encrypted_data = $this->encrypter->encrypt($jsonPayload->formData);
+        $compressed_data = gzencode($encrypted_data, 9);
 
         try {
             // If the form has an ID, update it, otherwise create a new one
@@ -43,7 +41,7 @@ class FormBuilder extends BaseController
                     'form_blob' => $compressed_data
                 ]);
             }
-            else{
+            else {
                 $formModel->save([
                     'form_blob' => $compressed_data,
                     'user_id' => $_SESSION['user_id'],
@@ -64,8 +62,8 @@ class FormBuilder extends BaseController
         $formModel = model(FormModel::class);
         $form = $formModel->getForm($id);
 
-        $uncompressed_data = gzuncompress($form['form_blob']);
-        $decrypted_data = $encrypter->decrypt($uncompressed_data);
+        $uncompressed_data = gzdecode($form['form_blob']);
+        $decrypted_data = $this->encrypter->decrypt($uncompressed_data);
 
         $data = [
             'form' => $decrypted_data,

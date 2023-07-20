@@ -3,13 +3,13 @@
 namespace Config;
 
 use App\Controllers\FormBuilder;
-use App\Controllers\FormController;
 use App\Controllers\FormGeneratorController;
 use App\Controllers\Home;
 use App\Controllers\UserController;
 use App\Controllers\LoginController;
 use App\Controllers\RegistrationController;
 use App\Controllers\BaseController;
+use App\Controllers\FormComponent;
 
 // Create a new instance of our RouteCollection class.
 $routes = Services::routes();
@@ -44,18 +44,12 @@ $routes->get('/', 'Home::index');
 $routes->get('form/create', [FormBuilder::class, 'index']);
 $routes->get('form/edit/(:any)', [FormBuilder::class, 'editForm']);
 $routes->post('form/save', 'FormBuilder::saveForm');
-<<<<<<< Updated upstream
-$routes->post('form-builder/save-form', 'FormBuilder::saveForm');
-=======
 
 $routes->post('form-components/(:segment)', [[FormComponent::class, 'index'], '$1']);
-$routes->post('form-builder/save-form', 'FormBuilder::saveForm');
 
-//ani's routing
 $routes->match(['get', 'post'], '/', 'LoginController::index');
 $routes->match(['get', 'post'], 'user/register', 'RegistrationController::index');
 
->>>>>>> Stashed changes
 /*
  * --------------------------------------------------------------------
  * Additional Routing
