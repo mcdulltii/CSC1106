@@ -60,7 +60,7 @@ function createAlert(title, summary, details, severity, dismissible, autoDismiss
     if (dismissible) {
         var msgClose = $("<span />", {
             "class": "close", // you need to quote "class" since it's a reserved keyword
-            "data-dismiss": "alert",
+            "data-bs-dismiss": "alert",
             html: "<i class='fa fa-times-circle'></i>"
         }).appendTo(msg);
     }
