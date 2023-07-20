@@ -9,6 +9,7 @@ use App\Libraries\FormComponents\FormSelect;
 use App\Libraries\FormComponents\FormTextarea;
 use App\Libraries\FormComponents\FormButton;
 use App\Libraries\FormComponents\FormFieldset;
+use App\Libraries\FormComponents\FormText;
 
 class FormComponent extends BaseController
 {
@@ -29,6 +30,8 @@ class FormComponent extends BaseController
                 return $this->button($tag, $json);
             case 'fieldset':
                 return $this->fieldset($tag, $json);
+            case 'text':
+                return $this->text($tag, $json);
             default:
                 return $this->setResponseFormat('json')
                     ->fail('Tag is not supported');
@@ -246,6 +249,33 @@ class FormComponent extends BaseController
         $data['html'] = $component->render(
             $fields['legend'],
             $fields['attributes']
+        );
+
+        return $this->setResponseFormat('json')
+            ->respond(
+                $data,
+                200,
+                'Successfully rendered'
+            );
+    }
+
+    private function text($tag, $json)
+    {
+        $component = new FormText();
+
+        if (isset($json['heading']) && $component->check_supported($json['heading'])) {
+            if (!isset($json['text']))
+                return $this->setResponseFormat('json')
+                    ->fail('\'text\' is required');
+        } else {
+            return $this->setResponseFormat('json')
+                ->fail('\'heading\' is not supported');
+        }
+
+        $data['html'] = $component->render(
+            $tag,
+            $json['heading'],
+            $json['text']
         );
 
         return $this->setResponseFormat('json')

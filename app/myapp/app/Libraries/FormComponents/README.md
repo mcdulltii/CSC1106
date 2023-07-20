@@ -228,3 +228,24 @@
     }
 }
 ```
+
+## 6. Text
+#### Endpoint: /form-components/text
+> #### Body Request
+```json
+{
+    "heading": "p",
+    "value": "This is paragraph"
+}
+```
+> #### Output
+```html
+<p id="text_0">This is paragraph</p>
+```
+> #### Additional Support
+#### Attributes
+```json
+{
+    "heading": "p" | "h1" | "h2" | "h3"
+}
+```

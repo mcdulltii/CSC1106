@@ -41,9 +41,9 @@ $(document).ready(function () {
     // Form fields array
     const form_fields = [
         { type: 'button', label: 'Button', properties: ['type', 'value'] },
-        { type: 'fieldset', label: 'Fieldset', properties: ['legend'] }, //to change FormFieldset.php?
+        // { type: 'fieldset', label: 'Fieldset', properties: ['legend'] }, // TODO: to change FormFieldset.php?
         { type: 'input', label: 'Input', properties: ['label', 'type', 'datalist'] },
-        { type: 'label', label: 'Label', properties: ['form_name', 'value'] },
+        { type: 'text', label: 'Text', properties: ['heading', 'text'] },
         { type: 'select', label: 'Select', properties: ['label','options','optgroups'] },
         { type: 'textarea', label: 'Text Area', properties: ['label', 'type'] }
     ];
@@ -54,7 +54,7 @@ $(document).ready(function () {
     var modal_content = $("<div class='modal-content'></div>");
     var modal_header = $("<div class='modal-header'></div>");
     var modal_title = $("<h5 class='modal-title' id='form-fields-modal-label'></h5>");
-    var modal_close_button = $("<button type='button' class='close' data-bs-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>");
+    var modal_close_button = $("<button type='button' class='close btn btn-secondary' data-bs-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>");
     var modal_body = $("<div class='modal-body'></div>");
     var modal_footer = $("<div class='modal-footer'></div>");
     var modal_add_button = $("<button type='button' class='btn btn-primary' data-bs-dismiss='modal' id='modal-add-button'>Add</button>");
@@ -142,10 +142,17 @@ $(document).ready(function () {
         });
         console.log(params);
         console.log(modal_title.text().toLowerCase().replace(/ /g, ''));
-        getFormElement(modal_title.text().toLowerCase().replace(/ /g, ''), params).then(function (formElem){
+        getFormElement(modal_title.text().toLowerCase().replace(/ /g, ''), params)
+        .then(function (formElem){
             addHTMLToGrid(document.getElementById('row').value, document.getElementById('column').value, formElem["html"]);
+        })
+        .catch(error => {
+            createAlert('Oops!','Something went wrong','There was an error in the modal fields.','danger',true,false,'pageMessages');
         });
     });
+
+    // Hide grid highlighting on modal close
+    $('#form-fields-modal').on('hide.bs.modal', removeGridHighlight);
 
     // Save form button click event
     $("#save-form").click(function (e) {
@@ -159,7 +166,7 @@ $(document).ready(function () {
             for (var j = 0; j < row.length; j++) {
                 var cell = row[j];
                 // Replace delete button div with empty string
-                var html = cell.innerHTML.replace(/<div class="delete-button" onclick="deleteCell\(this\)">x<\/div>/g, '');
+                var html = cell.innerHTML.replace(/<div class="delete-button" onclick="deleteCell\(this\)">&times;<\/div>/g, '');
                 form.push({ 'row': i, 'column': j, 'html': html });
             }
         }
@@ -183,12 +190,11 @@ $(document).ready(function () {
                 }
             }
             else{
-                createAlert('Opps!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
+                createAlert('Oops!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
             }
         })
         .catch(error => {
-            console.log(error);
-            createAlert('Opps!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
+            createAlert('Oops!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
         });
     });
 });
@@ -198,7 +204,7 @@ function addNewRow() {
     var newRow = '<div class="rowGrid" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
         '<div class="itemsContainer">' +
         '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
-        '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
+        '<div class="delete-button" onclick="deleteCell(this)">&times;</div>' +
         '</div></div>' +
         '<div class="col-plus-button" onclick="addNewColumn(this.parentNode)">+</div>'+
         '</div>';
@@ -208,7 +214,7 @@ function addNewRow() {
 // Function to add a new column when the "plus" button is clicked
 function addNewColumn(row) {
     var newColumn = '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
-        '<div class="delete-button" onclick="deleteCell(this)">x</div>' +
+        '<div class="delete-button" onclick="deleteCell(this)">&times;</div>' +
         '</div>';
     var items = row.getElementsByClassName('item');
     var itemsContainer = row.querySelector('.itemsContainer');
@@ -224,6 +230,10 @@ function createFragment(htmlStr) {
 
 // Function to append user-provided HTML above the "plus" button
 function addHTMLToGrid(row, col, htmlCode) {
+    if (row.length == 0 || col.length == 0) {
+        createAlert('Oops!','Something went wrong','There was an error adding form element.','danger',true,false,'pageMessages');
+        return;
+    }
     var rowGrid = document.getElementById("form-fields").getElementsByClassName("rowGrid")[row - 1];
     var colGrid = rowGrid.getElementsByClassName('item')[col - 1];
     colGrid.innerHTML = htmlCode + '<div class="delete-button" onclick="deleteCell(this)">x</div>';
@@ -313,6 +323,17 @@ function generateModalBody(buttonType, properties){
                 '<label class="col-sm-4 col-form-label">Type:</label>' +
                 '<div class="col-sm-8">' +
                 '<select name="type" id="iType" class="form-select">' + options + '</select></div></div>';
+        } else if (buttonType == 'text' && property == 'heading') {
+            modalBodyHTML += '<div class="form-group row">' +
+                '<label class="col-sm-4 col-form-label">Heading:</label>' +
+                '<div class="col-sm-8">' +
+                '<select name="heading" id="tHeading" class="form-select">' +
+                '<option value="p">p</option>' +
+                '<option value="h1">h1</option>' +
+                '<option value="h2">h2</option>' +
+                '<option value="h3">h3</option>' +
+                '</select>' +
+                '</div></div>';
         } else { // text fields
             modalBodyHTML += '<div class="form-group row">' +
                 '<label for="' + property + '" class="col-sm-4 col-form-label">' + property.charAt(0).toUpperCase() + property.slice(1) + ':</label>' +
@@ -345,6 +366,8 @@ function generateModalBody(buttonType, properties){
 }
 
 function detectRowChange(sel) {
+    removeGridHighlight();
+
     // Get number of columns in the row
     var cols = document.getElementById('form-fields').getElementsByClassName('rowGrid')[sel.value - 1].getElementsByClassName('item').length;
     // Add column dropdown options to modal body
@@ -369,6 +392,14 @@ function detectColChange(column) {
     colGrid.classList.add('highlighted-item');
 }
 
+function removeGridHighlight() {
+    for (let row of document.getElementById('form-fields').getElementsByClassName('rowGrid')) {
+        for (let col of row.getElementsByClassName('item')) {
+            col.classList.remove('highlighted-item');
+        }
+    }
+}
+
 // function to call api for element json data with input type as parameter
 function getFormElement(tag, params) {
     // Return form element after GET request succeeds
@@ -377,7 +408,6 @@ function getFormElement(tag, params) {
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 var res = JSON.parse(this.responseText);
-                console.log(res);
                 resolve(res);
             }
         };
