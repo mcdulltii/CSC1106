@@ -6,14 +6,14 @@
     <div class="container py-5 h-100">
         <div class="row d-flex align-items-center justify-content-center h-100">
             <?= session()->getFlashdata('error') ?>
-            <form action="<?php echo base_url(); ?>user/register" method="post">
+            <form action="<?php echo base_url(); ?>register" method="post">
                 <?= csrf_field() ?>
                 <h5> Create a New User: </h5>
 
                 <!-- Username input -->
                 <div class="form-outline mb-4">
-                    <input type="text" id="user_name" name="user_name" class="form-control" value="<?= set_value('user_name') ?>" />
-                    <label class="form-label" for="user_name">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" value="<?= set_value('username') ?>" />
+                    <label class="form-label" for="username">Username</label>
                 </div>
 
                 <!-- Password input -->
@@ -28,11 +28,12 @@
                     <label class="form-label" for="confirmpassword">Repeat password</label>
                 </div>
 
+                <?= validation_list_errors(); ?>
+
                 <!-- Submit button -->
                 <div class="form-check d-flex justify-content-center mb-4">
                     <button type="submit" class="btn btn-primary btn-block mb-3">Register</button>
-                </div> <img class="masthead-avatar mb-5" src="assets/img/avataaars.svg" alt="..." />
-
+                </div>
             </form>
         </div>
 </section>

@@ -11,12 +11,8 @@ class FormBuilder extends BaseController
     public function __construct()
     {
         $this->encrypter = \Config\Services::encrypter();
-
-        $session = \Config\Services::session();
-        // Set the user ID to 1 for now
-        $session->set('user_id', 1);
     }
-    
+
     public function index()
     {
         // Clear the form ID from the session to ensure form builder starts fresh
@@ -57,7 +53,7 @@ class FormBuilder extends BaseController
     {
         // Set the form ID in the session so the form builder knows which form to load and update
         $_SESSION['form_id'] = $id;
-        
+
         // Get the form from the database
         $formModel = model(FormModel::class);
         $form = $formModel->getForm($id);

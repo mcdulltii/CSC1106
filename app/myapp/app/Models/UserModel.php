@@ -43,4 +43,10 @@ class UserModel extends Model
     {
         return $this->findAll();
     }
+
+    public function getUserID($username)
+    {
+        $user = $this->where(['user_name' => $username])->first();
+        return $user['user_id'];
+    }
 }
