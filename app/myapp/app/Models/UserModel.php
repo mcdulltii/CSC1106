@@ -43,4 +43,21 @@ class UserModel extends Model
     {
         return $this->findAll();
     }
+
+    private function getUser($username)
+    {
+        return $this->where(['user_name' => $username])->first();
+    }
+
+    public function getUserID($username)
+    {
+        $user = $this->getUser($username);
+        return $user['user_id'];
+    }
+
+    public function getUserPasswordHash($username)
+    {
+        $user = $this->getUser($username);
+        return $user['user_password_hash'];
+    }
 }

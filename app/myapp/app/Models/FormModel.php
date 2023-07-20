@@ -39,11 +39,11 @@ class FormModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getForms()
+    public function getForms($user_id)
     {
-        return $this->findAll();
+        return $this->where(['user_id' => $user_id])->findAll();
     }
-    
+
     public function getForm($form_id)
     {
         return $this->where(['form_id' => $form_id])->first();

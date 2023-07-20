@@ -11,17 +11,20 @@ class FormBuilder extends BaseController
     public function __construct()
     {
         $this->encrypter = \Config\Services::encrypter();
-
-        $session = \Config\Services::session();
-        // Set the user ID to 1 for now
-        $session->set('user_id', 1);
     }
-    
+
     public function index()
     {
-        // Clear the form ID from the session to ensure form builder starts fresh
-        $_SESSION['form_id'] = null;
-        return view('FormBuilder/form_builder', ['form' => null]);
+        $session = \Config\Services::session();
+        $uid = $session->get('user_id');
+
+        if (!$uid) {
+            return redirect('register', 'refresh');
+        } else {
+            // Clear the form ID from the session to ensure form builder starts fresh
+            $_SESSION['form_id'] = null;
+            return view('FormBuilder/form_builder', ['form' => null]);
+        }
     }
 
     public function saveForm()
@@ -57,7 +60,7 @@ class FormBuilder extends BaseController
     {
         // Set the form ID in the session so the form builder knows which form to load and update
         $_SESSION['form_id'] = $id;
-        
+
         // Get the form from the database
         $formModel = model(FormModel::class);
         $form = $formModel->getForm($id);
