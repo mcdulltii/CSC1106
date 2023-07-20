@@ -26,7 +26,7 @@ class FormTextarea extends BaseComponent
         ];
         $message = "Unsupported attributes for 'textarea': ";
 
-        return $this->check_additonalAttr(
+        return $this->check_additionalAttr(
             $commonAttributes,
             $attrs,
             $message

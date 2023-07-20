@@ -17,7 +17,7 @@ class FormFieldset extends BaseComponent
         $commonAttributes = ["class", "name", "disabled"];
         $message = "Unsupported attributes for 'fieldset': ";
 
-        return $this->check_additonalAttr(
+        return $this->check_additionalAttr(
             $commonAttributes,
             $attrs,
             $message

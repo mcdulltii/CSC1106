@@ -70,7 +70,7 @@ class FormInput extends BaseComponent
         ];
         $message = "Unsupported attributes for input type '$type': ";
 
-        return $this->check_additonalAttr(
+        return $this->check_additionalAttr(
             $commonAttributes,
             $attrs,
             $message,

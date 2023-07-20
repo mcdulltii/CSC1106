@@ -48,7 +48,7 @@ abstract class BaseComponent
         return count(array_filter($options, 'is_array')) === count($options);
     }
 
-    protected function check_additonalAttr(
+    protected function check_additionalAttr(
         $commonAttributes,
         $attrs,
         $message,

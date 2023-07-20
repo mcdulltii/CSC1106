@@ -242,3 +242,13 @@
 ```html
 <p id="text_0">This is paragraph</p>
 ```
+> #### Additional Support
+#### Attributes
+```json
+{
+    "attributes": {
+        "class": "text-class",
+        "name": "text-name"
+    }
+}
+```

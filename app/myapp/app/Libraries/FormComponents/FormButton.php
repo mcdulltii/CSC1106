@@ -28,7 +28,7 @@ class FormButton extends BaseComponent
         ];
         $message = "Unsupported attributes for button type '$type': ";
 
-        return $this->check_additonalAttr(
+        return $this->check_additionalAttr(
             $commonAttributes,
             $attrs,
             $message,

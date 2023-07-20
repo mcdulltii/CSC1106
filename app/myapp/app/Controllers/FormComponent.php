@@ -262,6 +262,9 @@ class FormComponent extends BaseController
     private function text($tag, $json)
     {
         $component = new FormText();
+        $fields = [
+            'attributes' => '',
+        ];
 
         if (isset($json['heading']) && $component->check_supported($json['heading'])) {
             if (!isset($json['text']))
@@ -272,10 +275,19 @@ class FormComponent extends BaseController
                 ->fail('\'heading\' is not supported');
         }
 
+        $attrResponse = $this->check_attributes($tag, $component, $json);
+        if (is_null($attrResponse)) {
+        } else if (is_bool($attrResponse)) {
+            $fields['attributes'] = $json['attributes'];
+        } else {
+            return $attrResponse;
+        }
+
         $data['html'] = $component->render(
             $tag,
             $json['heading'],
-            $json['text']
+            $json['text'],
+            $fields['attributes']
         );
 
         return $this->setResponseFormat('json')

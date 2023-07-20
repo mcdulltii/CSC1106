@@ -43,7 +43,7 @@ class FormSelect extends BaseComponent
         $commonAttributes = ["class", "name", "disabled", "multiple", "required"];
         $message = "Unsupported attributes for 'select': ";
 
-        return $this->check_additonalAttr(
+        return $this->check_additionalAttr(
             $commonAttributes,
             $attrs,
             $message
