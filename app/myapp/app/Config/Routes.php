@@ -42,12 +42,13 @@ $routes->set404Override();
 $routes->get('/', 'Home::index');
 $routes->get('form/create', [FormBuilder::class, 'index']);
 $routes->get('form/edit/(:any)', [FormBuilder::class, 'editForm']);
-$routes->post('form/save', 'FormBuilder::saveForm');
+$routes->post('form/save', [FormBuilder::class, 'saveForm']);
 
 $routes->post('form-components/(:segment)', [[FormComponent::class, 'index'], '$1']);
 
 $routes->match(['get', 'post'], '/login', 'LoginController::index');
 $routes->match(['get', 'post'], '/register', 'RegistrationController::index');
+$routes->get('/logout', 'LoginController::logout');
 
 /*
  * --------------------------------------------------------------------

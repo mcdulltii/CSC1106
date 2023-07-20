@@ -39,7 +39,7 @@ class RegistrationController extends BaseController
 
         $session = \Config\Services::session();
         // Set the user ID to 1 for now
-        $session->set('user_id', $model->getUserID($post['username']));
+        $session->set('user_id', $model->getUserID($data['user_name']));
 
         return redirect('/', 'refresh');
     }

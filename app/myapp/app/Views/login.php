@@ -6,9 +6,9 @@
     <div class="container py-5 h-100">
         <div class="row d-flex align-items-center justify-content-center h-100">
             <?= session()->getFlashdata('error') ?>
-            <form action="<?php echo base_url(); ?>register" method="post">
+            <form action="<?php echo base_url(); ?>login" method="post">
                 <?= csrf_field() ?>
-                <h5> Create a new user: </h5>
+                <h5> Login existing user: </h5>
 
                 <!-- Username input -->
                 <div class="form-outline mb-4">
@@ -22,17 +22,11 @@
                     <label class="form-label" for="password">Password</label>
                 </div>
 
-                <!-- Repeat Password input -->
-                <div class="form-outline mb-4">
-                    <input type="password" id="confirmpassword" name="confirmpassword" class="form-control" value="<?= set_value('confirmpassword') ?>" />
-                    <label class="form-label" for="confirmpassword">Repeat password</label>
-                </div>
-
                 <?= validation_list_errors(); ?>
 
                 <!-- Submit button -->
                 <div class="form-check d-flex justify-content-center mb-4">
-                    <button type="submit" class="btn btn-primary btn-block mb-3">Register</button>
+                    <button type="submit" class="btn btn-primary btn-block mb-3">Login</button>
                 </div>
             </form>
         </div>

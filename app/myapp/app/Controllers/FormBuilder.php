@@ -15,9 +15,16 @@ class FormBuilder extends BaseController
 
     public function index()
     {
-        // Clear the form ID from the session to ensure form builder starts fresh
-        $_SESSION['form_id'] = null;
-        return view('FormBuilder/form_builder', ['form' => null]);
+        $session = \Config\Services::session();
+        $uid = $session->get('user_id');
+
+        if (!$uid) {
+            return redirect('register', 'refresh');
+        } else {
+            // Clear the form ID from the session to ensure form builder starts fresh
+            $_SESSION['form_id'] = null;
+            return view('FormBuilder/form_builder', ['form' => null]);
+        }
     }
 
     public function saveForm()
