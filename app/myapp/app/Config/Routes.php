@@ -6,6 +6,8 @@ use App\Controllers\FormBuilder;
 use App\Controllers\FormGeneratorController;
 use App\Controllers\Home;
 use App\Controllers\UserController;
+use App\Controllers\LoginController;
+use App\Controllers\RegistrationController;
 use App\Controllers\BaseController;
 use App\Controllers\FormComponent;
 
@@ -45,6 +47,9 @@ $routes->post('form/save', 'FormBuilder::saveForm');
 
 $routes->post('form-components/(:segment)', [[FormComponent::class, 'index'], '$1']);
 
+$routes->match(['get', 'post'], '/', 'LoginController::index');
+$routes->match(['get', 'post'], 'user/register', 'RegistrationController::index');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
@@ -58,6 +63,7 @@ $routes->post('form-components/(:segment)', [[FormComponent::class, 'index'], '$
  * You will have access to the $routes object within that file without
  * needing to reload it.
  */
+
 if (is_file(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
     require APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php';
 }
