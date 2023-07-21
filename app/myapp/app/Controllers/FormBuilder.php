@@ -5,6 +5,7 @@ namespace App\Controllers;
 use Ramsey\Uuid\Uuid;
 
 use App\Controllers\BaseController;
+
 class FormBuilder extends BaseController
 {
     private $encrypter;
