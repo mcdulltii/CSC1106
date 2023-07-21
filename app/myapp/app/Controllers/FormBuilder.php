@@ -2,8 +2,9 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
+use Ramsey\Uuid\Uuid;
 
+use App\Controllers\BaseController;
 class FormBuilder extends BaseController
 {
     private $encrypter;
@@ -47,6 +48,7 @@ class FormBuilder extends BaseController
             }
             else {
                 $formModel->save([
+                    'form_id' => Uuid::uuid4()->toString(),
                     'form_blob' => $compressed_data,
                     'user_id' => $this->session->get('user_id'),
                 ]);
