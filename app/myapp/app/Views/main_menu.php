@@ -169,9 +169,9 @@
                                     <a class="btn btn-danger" href="">
                                         Delete Form
                                     </a>
-                                    <a class="btn btn-secondary" href="form/edit/<?=$row['form_id']?>">
-                                        Export Form to PDF
-                                    </a>
+                                    <form method="post" action="form/export/<?=$row['form_id']?>">
+                                        <input class="btn btn-secondary" type='submit' value='Export Form to PDF' />
+                                    </form>
                                 </div>
                             </div>
                         </div>

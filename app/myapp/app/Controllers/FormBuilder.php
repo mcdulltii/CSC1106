@@ -75,4 +75,23 @@ class FormBuilder extends BaseController
 
         return view('FormBuilder/form_builder', $data);
     }
+
+    public function exportForm($id)
+    {
+        // Set the form ID in the session so the form builder knows which form to load and update
+        $this->session->set('form_id', $id);
+
+        // Get the form from the database
+        $formModel = model(FormModel::class);
+        $form = $formModel->getForm($id);
+
+        $uncompressed_data = gzdecode($form['form_blob']);
+        $decrypted_data = $this->encrypter->decrypt($uncompressed_data);
+
+        $data = [
+            'form' => $decrypted_data,
+        ];
+
+        return view('FormBuilder/form_export', $data);
+    }
 }

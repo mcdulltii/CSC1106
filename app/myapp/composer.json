@@ -9,6 +9,7 @@
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
+        "almasaeed2010/adminlte": "~3.2",
         "laminas/laminas-escaper": "^2.9",
         "psr/log": "^1.1"
     },

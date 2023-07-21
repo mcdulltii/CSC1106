@@ -54,7 +54,7 @@ $(document).ready(function () {
     var modal_content = $("<div class='modal-content'></div>");
     var modal_header = $("<div class='modal-header'></div>");
     var modal_title = $("<h5 class='modal-title' id='form-fields-modal-label'></h5>");
-    var modal_close_button = $("<button type='button' class='close btn btn-secondary' data-bs-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>");
+    var modal_close_button = $("<button type='button' class='close btn btn-secondary' data-bs-dismiss='modal' aria-label='Close'><span aria-hidden='true'>X</span></button>");
     var modal_body = $("<div class='modal-body'></div>");
     var modal_footer = $("<div class='modal-footer'></div>");
     var modal_add_button = $("<button type='button' class='btn btn-primary' data-bs-dismiss='modal' id='modal-add-button'>Add</button>");
@@ -166,7 +166,7 @@ $(document).ready(function () {
             for (var j = 0; j < row.length; j++) {
                 var cell = row[j];
                 // Replace delete button div with empty string
-                var html = cell.innerHTML.replace(/<div class="delete-button" onclick="deleteCell\(this\)">&times;<\/div>/g, '');
+                var html = cell.innerHTML.replace(/<div class="delete-button" onclick="deleteCell\(this\)">X<\/div>/g, '');
                 form.push({ 'row': i, 'column': j, 'html': html });
             }
         }
@@ -204,7 +204,7 @@ function addNewRow() {
     var newRow = '<div class="rowGrid" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
         '<div class="itemsContainer">' +
         '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
-        '<div class="delete-button" onclick="deleteCell(this)">&times;</div>' +
+        '<div class="delete-button" onclick="deleteCell(this)">X</div>' +
         '</div></div>' +
         '<div class="col-plus-button" onclick="addNewColumn(this.parentNode)">+</div>'+
         '</div>';
@@ -214,7 +214,7 @@ function addNewRow() {
 // Function to add a new column when the "plus" button is clicked
 function addNewColumn(row) {
     var newColumn = '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
-        '<div class="delete-button" onclick="deleteCell(this)">&times;</div>' +
+        '<div class="delete-button" onclick="deleteCell(this)">X</div>' +
         '</div>';
     var items = row.getElementsByClassName('item');
     var itemsContainer = row.querySelector('.itemsContainer');
@@ -236,7 +236,7 @@ function addHTMLToGrid(row, col, htmlCode) {
     }
     var rowGrid = document.getElementById("form-fields").getElementsByClassName("rowGrid")[row - 1];
     var colGrid = rowGrid.getElementsByClassName('item')[col - 1];
-    colGrid.innerHTML = htmlCode + '<div class="delete-button" onclick="deleteCell(this)">x</div>';
+    colGrid.innerHTML = htmlCode + '<div class="delete-button" onclick="deleteCell(this)">X</div>';
     // Remove highlighted-item class from the selected cell
     colGrid.classList.remove('highlighted-item');
 }

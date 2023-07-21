@@ -14,6 +14,14 @@
     gap: 10px;grid-area: right;
 }
 
+.grid-container-export {
+    display: grid;
+    gap: 10px;
+    background-color: #2196F3;
+    padding: 10px;
+    height: 100vh;
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: 4fr 1fr;
@@ -23,7 +31,7 @@
     padding: 10px;
 }
 
-.grid-container>div {
+.grid-container>div, .grid-container-export>div {
     background-color: rgba(255, 255, 255, 0.8);
     text-align: center;
     padding: 20px 0;
@@ -43,6 +51,7 @@ table {
     justify-content: space-between;
     padding: 0px;
     padding-left: 10px;
+    padding-right: 10px;
     overflow: hidden;
 }
 
@@ -54,7 +63,7 @@ table {
 .item {
     position: relative;
     padding: 10px;
-    min-height: 30px;
+    min-height: 80px;
     margin: 2px;
     flex-grow: 1; /* Allow the columns to resize within the itemsContainer */
     transition: background-color 0.2s;
