@@ -7,22 +7,23 @@ use App\Controllers\BaseController;
 class FormBuilder extends BaseController
 {
     private $encrypter;
+    private $session;
 
     public function __construct()
     {
         $this->encrypter = \Config\Services::encrypter();
+        $this->session = \Config\Services::session();
     }
 
     public function index()
     {
-        $session = \Config\Services::session();
-        $uid = $session->get('user_id');
+        $uid = $this->session->get('user_id');
 
         if (!$uid) {
             return redirect('register', 'refresh');
         } else {
             // Clear the form ID from the session to ensure form builder starts fresh
-            $_SESSION['form_id'] = null;
+            $this->session->set('form_id', null);
             return view('FormBuilder/form_builder', ['form' => null]);
         }
     }
@@ -30,7 +31,7 @@ class FormBuilder extends BaseController
     public function saveForm()
     {
         $jsonPayload = $this->request->getJSON();
-        $id = $_SESSION['form_id'] ?? null;
+        $id = $this->session->get('form_id') ?? null;
 
         $formModel = model(FormModel::class);
 
@@ -47,7 +48,7 @@ class FormBuilder extends BaseController
             else {
                 $formModel->save([
                     'form_blob' => $compressed_data,
-                    'user_id' => $_SESSION['user_id'],
+                    'user_id' => $this->session->get('user_id'),
                 ]);
             }
             return $this->response->setJSON(['success' => true]);
@@ -59,7 +60,7 @@ class FormBuilder extends BaseController
     public function editForm($id)
     {
         // Set the form ID in the session so the form builder knows which form to load and update
-        $_SESSION['form_id'] = $id;
+        $this->session->set('form_id', $id);
 
         // Get the form from the database
         $formModel = model(FormModel::class);
