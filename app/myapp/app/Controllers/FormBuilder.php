@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use Dompdf\Dompdf;
+
 use App\Controllers\BaseController;
 
 class FormBuilder extends BaseController
@@ -92,6 +94,21 @@ class FormBuilder extends BaseController
             'form' => $decrypted_data,
         ];
 
-        return view('FormBuilder/form_export', $data);
+        if (! $this->request->is('post')) {
+            return view('FormBuilder/form_export', $data);
+        }
+
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml(view('FormBuilder/form_export', $data));
+
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'landscape');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream();
     }
 }

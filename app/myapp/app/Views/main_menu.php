@@ -162,7 +162,6 @@
                                     <!-- Portfolio Modal - Image-->
                                     <img class="img-fluid rounded mb-5" src="assets/img/portfolio/placeholder.png" alt="..." />
                                     <!-- Portfolio Modal - Text-->
-                                    <p class="mb-4">Display the forms here</p>
                                     <a class="btn btn-primary" href="form/edit/<?=$row['form_id']?>">
                                         Update Form Details
                                     </a>

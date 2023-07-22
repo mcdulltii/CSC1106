@@ -5,46 +5,46 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Form Builder</title>
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href=<?= base_url("css/styles.css") ?> rel="stylesheet" />
-    <link href=<?= base_url("css/bootstrap.min.css") ?> rel="stylesheet">
-    <link href=<?= base_url("css/form.css") ?> rel="stylesheet">
-    <link href=<?= base_url("css/adminlte.min.css") ?> rel="stylesheet">
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            width: 100%;
+            border: none;
+            min-height: 60px;
+        }
+
+        td {
+            text-align: center;
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-height: 60px;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="grid-container-export" id="form-builder">
-        <div id="form-fields" class="item1">
-            <?php
-            // Iterate $form array to build grid layout
-            if (isset($form)) {
-                $total_row = 0;
+    <?php
+    // Iterate $form array to build grid layout
+    if (isset($form)) {
+        $total_row = 0;
+        $total_column = 0;
+        foreach (json_decode($form) as $item) {
+            // Add row if it doesn't exist
+            if ($total_row - 1 < $item->row) {
                 $total_column = 0;
-                foreach (json_decode($form) as $item) {
-                    // Add row if it doesn't exist
-                    if ($total_row - 1 < $item->row) {
-                        $total_column = 0;
-                        if ($total_row > 0) echo '</div>';
-                        echo '<div class="rowGrid">';
-                        $total_row++;
-                    }
-                    // Add column in row if it doesn't exist
-                    if ($total_column <= $item->column) {
-                        echo '<div class="item">' . $item->html . '</div>';
-                        $total_column++;
-                    }
-                }
-                echo '</div>';
+                if ($total_row > 0) echo '</tr></tbody></table>';
+                echo '<table><tbody><tr>';
+                $total_row++;
             }
-            ?>
-        </div>
-    </div>
-    <!-- this row will not appear when printing -->
-    <div class="row no-print">
-        <div class="col-12">
-            <button onclick="window.print()" class="btn btn-primary float-right" style="margin-right: 5px;"><i class="fas fa-print"></i> Print as PDF</button>
-        </div>
-    </div>
+            // Add column in row if it doesn't exist
+            if ($total_column <= $item->column) {
+                echo '<td>' . $item->html . '</td>';
+                $total_column++;
+            }
+        }
+        echo '</tr></tbody></table>';
+    }
+    ?>
 </body>
 
 </html>
