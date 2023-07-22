@@ -87,6 +87,6 @@ class FormBuilder extends BaseController
         $formModel = model(FormModel::class);
         $formModel->deleteForm($id);
 
-        return $this->index();
+        return redirect('/', 'refresh');
     }
 }
