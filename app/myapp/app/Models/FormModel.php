@@ -53,4 +53,9 @@ class FormModel extends Model
     {
         return $this->where(['form_id' => $form_id])->set($data)->update();
     }
+
+    public function deleteForm($form_id)
+    {
+        return $this->where(['form_id' => $form_id])->delete();
+    }
 }
