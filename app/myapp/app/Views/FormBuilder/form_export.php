@@ -10,14 +10,14 @@
             font-family: arial, sans-serif;
             width: 100%;
             border: none;
-            min-height: 60px;
         }
 
         td {
             text-align: center;
             border: 1px solid #ccc;
             padding: 10px;
-            min-height: 60px;
+            height: 60px;
+            width: 60px;
         }
     </style>
 </head>
