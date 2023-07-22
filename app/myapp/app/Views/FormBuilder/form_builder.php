@@ -41,7 +41,6 @@ $(document).ready(function () {
     // Form fields array
     const form_fields = [
         { type: 'button', label: 'Button', properties: ['type', 'value'] },
-        // { type: 'fieldset', label: 'Fieldset', properties: ['legend'] }, // TODO: to change FormFieldset.php?
         { type: 'input', label: 'Input', properties: ['label', 'type', 'datalist'] },
         { type: 'text', label: 'Text', properties: ['heading', 'text'] },
         { type: 'select', label: 'Select', properties: ['label','options','optgroups'] },
@@ -101,7 +100,8 @@ $(document).ready(function () {
         })(form_fields[i]);
     }
     // Add save form button
-    $("#form-fields-buttons").append('<div class="w-100"><button type="button" class="btn btn-primary" id="save-form">Save</button></div>')
+    $("#form-fields-buttons").append('<div class="w-100"><button type="button" class="btn btn-primary" id="save-form">Save</button></div>');
+    $("#form-fields-buttons").append('<div class="w-100"><button type="button" class="btn btn-primary" id="export-form">Export</button></div>');
 
     // Add button click event
     modal_add_button.click(function () {
@@ -197,7 +197,97 @@ $(document).ready(function () {
             createAlert('Oops!','Something went wrong','There was an error saving the form.','danger',true,false,'pageMessages');
         });
     });
+
+    
+
+    // Add a button click event to trigger PDF export
+    $("#export-form").click(function () {
+        // Get the content of the form grid
+        var gridContent = document.getElementById("form-fields").innerHTML;
+
+        // Create a temporary div element to manipulate the HTML
+        var tempDiv = document.createElement("div");
+        tempDiv.innerHTML = gridContent;
+
+        // Remove the plus buttons and plus-button-container row from the temporary div
+        var plusButtons = tempDiv.getElementsByClassName("col-plus-button");
+        for (var i = plusButtons.length - 1; i >= 0; i--) {
+            var plusButton = plusButtons[i];
+            plusButton.parentNode.removeChild(plusButton);
+        }
+
+        var plusButtonContainers = tempDiv.getElementsByClassName("plus-button-container");
+        for (var i = plusButtonContainers.length - 1; i >= 0; i--) {
+            var plusButtonContainer = plusButtonContainers[i];
+            plusButtonContainer.parentNode.removeChild(plusButtonContainer);
+        }
+
+        // Remove the delete buttons
+        var deleteButtons = tempDiv.getElementsByClassName("delete-button");
+        for (var i = deleteButtons.length - 1; i >= 0; i--) {
+            var deleteButton = deleteButtons[i];
+            deleteButton.parentNode.removeChild(deleteButton);
+        }
+
+        // Create a new table element
+        var table = document.createElement("table");
+        table.style.borderCollapse = "collapse";
+
+        // Iterate through each rowGrid element to create table rows (tr)
+        var rowGrids = tempDiv.getElementsByClassName("rowGrid");
+        for (var i = 0; i < rowGrids.length; i++) {
+            var rowGrid = rowGrids[i];
+
+            // Create a new table row (tr) for each rowGrid
+            var tableRow = document.createElement("tr");
+
+            // Iterate through each item in the rowGrid to create table cells (td)
+            var items = rowGrid.getElementsByClassName("item");
+            for (var j = 0; j < items.length; j++) {
+                var item = items[j];
+
+                // Create a new table cell (td) for each item
+                var tableCell = document.createElement("td");
+                // Move the content of the item into the table cell
+                while (item.firstChild) {
+                    tableCell.appendChild(item.firstChild);
+                }
+
+                // Add the table cell to the table row
+                tableRow.appendChild(tableCell);
+            }
+
+            // Add the table row to the table
+            table.appendChild(tableRow);
+
+        }
+
+        // Get the modified grid content with the table structure
+        var modifiedGridContent = table.outerHTML;
+
+
+        // Wrap the content and generate the PDF
+        var wrap = "<div style='font-size:12px; border:0px solid; background-color: #FFFFFF; padding: 05px 15px; width:600px;'>" + modifiedGridContent + "</div>";
+        console.log(wrap);
+        
+        // Create a new jsPDF instance
+        var pdf = new jspdf.jsPDF('p', 'pt', 'a4');
+
+        pdf.setFontSize(8);
+        pdf.html(wrap, {
+            callback: function (pdf) {
+                // Save the PDF
+                pdf.save("form_grid.pdf");
+            },
+            x: 10,
+            y: 10
+        });
+    });
+
+    
 });
+
+
 
 // Function to add a new row when the "plus" button is clicked
 function addNewRow() {
@@ -300,6 +390,7 @@ document.addEventListener('dragleave', dragLeave);
 document.addEventListener('drop', drop);
 document.addEventListener('dragend', dragEnd);
 
+// generate modal based on attributes required for form element
 function generateModalBody(buttonType, properties){
     var modalBodyHTML = "";
     types = ["color", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number",
