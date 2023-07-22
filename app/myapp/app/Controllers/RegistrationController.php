@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use Ramsey\Uuid\Uuid;
+
 use App\Models\UserModel;
 
 class RegistrationController extends BaseController
@@ -31,6 +33,7 @@ class RegistrationController extends BaseController
         }
 
         $data = [
+            'user_id' => Uuid::uuid4()->toString(),
             'user_name' => $post['username'],
             'user_password_hash' => password_hash($post['password'], PASSWORD_DEFAULT)
         ];
