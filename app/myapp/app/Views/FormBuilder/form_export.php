@@ -94,7 +94,7 @@
             }
             // Add column in row if it doesn't exist
             if ($total_column <= $item->column) {
-                echo '<td>' . $item->html . '</td>';
+                echo '<td style="background-color: ' . $item->backgroundColor . '" data-font-weight: "' . $item->fontWeight . '">' . $item->html . '</td>';
                 $total_column++;
             }
         }

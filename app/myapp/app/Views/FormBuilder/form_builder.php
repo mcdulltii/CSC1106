@@ -177,7 +177,7 @@ $(document).ready(function () {
             for (var j = 0; j < row.length; j++) {
                 var cell = row[j];
                 // Replace delete button div with empty string
-                var html = cell.innerHTML.replace(/<div class="delete-button" onclick="deleteCell\(this\)">X<\/div>/g, '');
+                var html = cell.innerHTML.replace(/<div class="bold-button" onclick="toggleFontWeight\(this\)">B<\/div><div class="color-button" onclick="openColorInput\(this\)"><\/div><div class="delete-button" onclick="deleteCell\(this\)">X<\/div>/g, '');
                 var backgroundColor = cell.style.backgroundColor;
                 var fontWeight = window.getComputedStyle(cell).getPropertyValue('font-weight'); // Get the font weight
                 form.push({ 'row': i, 'column': j, 'html': html, 'backgroundColor': backgroundColor, 'fontWeight': fontWeight });
