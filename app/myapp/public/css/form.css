@@ -112,13 +112,49 @@ table {
     display: none;
 }
 
+.color-button {
+    position: absolute;
+    top: 40%;
+    right: 30px;
+    cursor: pointer;
+    font-size: 12px;
+    display: none;
+    width: 12px;
+    height: 12px;
+    border: 5px;
+    border-color: #fff;
+    background-color: white;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.bold-button {
+    position: absolute;
+    top: 40%;
+    right: 50px;
+    cursor: pointer;
+    font-size: 18px;
+    color: black;
+    display: none;
+}
+
 .item:hover:not(.plus-button-container) {
     background-color: gainsboro; /* Change the background color on hover */
 }
 
-.item:hover .delete-button {
+.item:hover .delete-button{
     display: block; /* Show the delete button on hover */
 }
+
+.item:hover .color-button{
+    display: block; /* Show the color button on hover */
+}
+
+.item:hover .bold-button{
+    display: block; /* Show the delete button on hover */
+}
+
 
 .drag-over {
     background-color: gainsboro; /* Set the desired background color for the drop target */
