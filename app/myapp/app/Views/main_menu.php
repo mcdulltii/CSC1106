@@ -165,7 +165,7 @@
                                     <a class="btn btn-primary" href="form/edit/<?=$row['form_id']?>">
                                         Update Form Details
                                     </a>
-                                    <a class="btn btn-danger" href="">
+                                    <a class="btn btn-danger" href="form/delete/<?=$row['form_id']?>">
                                         Delete Form
                                     </a>
                                     <form method="post" action="form/export/<?=$row['form_id']?>">

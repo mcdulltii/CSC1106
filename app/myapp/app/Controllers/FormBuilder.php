@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use Dompdf\Dompdf;
+use Ramsey\Uuid\Uuid;
 
 use App\Controllers\BaseController;
 
@@ -49,6 +50,7 @@ class FormBuilder extends BaseController
             }
             else {
                 $formModel->save([
+                    'form_id' => Uuid::uuid4()->toString(),
                     'form_blob' => $compressed_data,
                     'user_id' => $this->session->get('user_id'),
                 ]);
@@ -114,5 +116,16 @@ class FormBuilder extends BaseController
 
         // Output the generated PDF to Browser
         $dompdf->stream();
+    }
+
+    public function deleteForm($id)
+    {
+        $this->session->remove('form_id');
+
+        // Delete form from the database
+        $formModel = model(FormModel::class);
+        $formModel->deleteForm($id);
+
+        return redirect('/', 'refresh');
     }
 }

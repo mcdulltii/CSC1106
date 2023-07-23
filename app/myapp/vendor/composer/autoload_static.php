@@ -66,8 +66,8 @@ class ComposerStaticInit836fd169308e36ee66b7869f4c6f0387
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\Config\\' => 25,
             'Svg\\' => 4,
-            'Spatie\\ArrayToXml\\' => 18,
             'Sabberworm\\CSS\\' => 15,
+            'Spatie\\ArrayToXml\\' => 18,
         ),
         'R' => 
         array (

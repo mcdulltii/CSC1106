@@ -42,6 +42,7 @@ $routes->set404Override();
 $routes->get('/', 'Home::index');
 $routes->get('form/create', [FormBuilder::class, 'index']);
 $routes->get('form/edit/(:any)', [FormBuilder::class, 'editForm']);
+$routes->get('form/delete/(:any)', [FormBuilder::class, 'deleteForm']);
 $routes->match(['get', 'post'], 'form/export/(:any)', [FormBuilder::class, 'exportForm']);
 $routes->post('form/save', [FormBuilder::class, 'saveForm']);
 
