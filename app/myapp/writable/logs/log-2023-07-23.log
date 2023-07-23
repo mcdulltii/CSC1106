@@ -1,0 +1,8 @@
+CRITICAL - 2023-07-23 05:18:02 --> Trying to access array offset on value of type null
+in APPPATH/Models/UserModel.php on line 61.
+ 1 APPPATH/Models/UserModel.php(61): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 APPPATH/Controllers/LoginController.php(32): App\Models\UserModel->getUserPasswordHash()
+ 3 SYSTEMPATH/CodeIgniter.php(934): App\Controllers\LoginController->index()
+ 4 SYSTEMPATH/CodeIgniter.php(499): CodeIgniter\CodeIgniter->runController()
+ 5 SYSTEMPATH/CodeIgniter.php(368): CodeIgniter\CodeIgniter->handleRequest()
+ 6 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()

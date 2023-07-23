@@ -102,6 +102,12 @@ table {
     color: white;
 }
 
+.button-container {
+    display: inline-block; /* Display the buttons as inline blocks */
+    vertical-align: right; /* Align the container vertically to middle */
+    position: relative; /* Add this to position the buttons inside the container */
+}
+
 .delete-button {
     position: absolute;
     top: 50%;
@@ -113,13 +119,71 @@ table {
     display: none;
 }
 
+.color-button {
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    border: 5px;
+    border-color: black;
+    background-color: white;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    display: none;
+}
+
+input.color-button {
+    /* Set width and height to control the size of the circle */
+    width: 12px;
+    height: 12px;
+  
+    /* Set the border radius to make it a circle */
+    border-radius: 50%;
+  
+    /* Add a 3px black border */
+    border: 3px solid black;
+  }
+
+.bold-button {
+    position: absolute;
+    top: 50%;
+    right: 50px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: black;
+    display: none;
+}
+
+.color-picker-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+  }
+
 .item:hover:not(.plus-button-container) {
     background-color: gainsboro; /* Change the background color on hover */
 }
 
-.item:hover .delete-button {
+.item:hover .delete-button{
     display: block; /* Show the delete button on hover */
 }
+
+.item:hover .color-button{
+    display: block; /* Show the color button on hover */
+}
+
+.item:hover .bold-button{
+    display: block; /* Show the delete button on hover */
+}
+
 
 .drag-over {
     background-color: gainsboro; /* Set the desired background color for the drop target */

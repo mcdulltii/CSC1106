@@ -25,6 +25,8 @@ if(<?= isset($form) ? 'true' : 'false' ?>){
         var row = formData[i].row + 1;
         var col = formData[i].column + 1;
         var html = formData[i].html;
+        var backgroundColor = formData[i].backgroundColor;
+        var fontWeight = formData[i].fontWeight; // Get the font weight
         // Add row if it doesn't exist
         if (document.getElementById('form-fields').getElementsByClassName('rowGrid').length - 1 < row) {
             addNewRow();
@@ -34,6 +36,15 @@ if(<?= isset($form) ? 'true' : 'false' ?>){
             addNewColumn(document.getElementById('form-fields').getElementsByClassName('rowGrid')[row - 1]);
         }
         addHTMLToGrid(row, col, html);
+
+        // Set the background color of the grid cell if it's available in formData
+        var gridCell = document.getElementById('form-fields').getElementsByClassName('rowGrid')[row - 1].getElementsByClassName('item')[col - 1];
+        if (backgroundColor) {
+            gridCell.style.backgroundColor = backgroundColor;
+        }
+        if (fontWeight) {
+            gridCell.style.fontWeight = fontWeight;
+        }
     }
 }
 
@@ -167,7 +178,9 @@ $(document).ready(function () {
                 var cell = row[j];
                 // Replace delete button div with empty string
                 var html = cell.innerHTML.replace(/<div class="delete-button" onclick="deleteCell\(this\)">X<\/div>/g, '');
-                form.push({ 'row': i, 'column': j, 'html': html });
+                var backgroundColor = cell.style.backgroundColor;
+                var fontWeight = window.getComputedStyle(cell).getPropertyValue('font-weight'); // Get the font weight
+                form.push({ 'row': i, 'column': j, 'html': html, 'backgroundColor': backgroundColor, 'fontWeight': fontWeight });
             }
         }
 
@@ -204,21 +217,116 @@ function addNewRow() {
     var newRow = '<div class="rowGrid" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
         '<div class="itemsContainer">' +
         '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
+        '<div class="bold-button" onclick="toggleFontWeight(this)">B</div>' +
+        '<div class="color-button" onclick="openColorInput(this)"></div>' +
         '<div class="delete-button" onclick="deleteCell(this)">X</div>' +
         '</div></div>' +
         '<div class="col-plus-button" onclick="addNewColumn(this.parentNode)">+</div>'+
         '</div>';
     document.getElementById("form-fields").insertBefore(createFragment(newRow), document.querySelector('.plus-button-container'));
+
 }
 
 // Function to add a new column when the "plus" button is clicked
 function addNewColumn(row) {
     var newColumn = '<div class="item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">' +
-        '<div class="delete-button" onclick="deleteCell(this)">X</div>' +
-        '</div>';
+    '<div class="bold-button" onclick="toggleFontWeight(this)">B</div>' +
+    '<div class="color-button" onclick="openColorInput(this)"></div>' +
+    '<div class="delete-button" onclick="deleteCell(this)">X</div>' +
+    '</div>';
     var items = row.getElementsByClassName('item');
     var itemsContainer = row.querySelector('.itemsContainer');
     itemsContainer.insertAdjacentHTML('beforeend', newColumn);
+
+}
+
+function toggleFontWeight(triggerElement) {
+    var item = triggerElement.closest(".item");
+    if (item) {
+        // Get the first child element of the .item div
+        var nestedElement = item.firstElementChild;
+        if (nestedElement) {
+            var tagName = nestedElement.tagName.toLowerCase();
+            var currentFontWeight = item.dataset.fontWeight || window.getComputedStyle(nestedElement).getPropertyValue('font-weight');
+            var initialFontWeight = item.dataset.initialFontWeight || window.getComputedStyle(nestedElement).getPropertyValue('font-weight');
+
+            // Check if the nested element is an <h1>, <h2>, or <h3> tag
+            if (tagName === 'h1' || tagName === 'h2' || tagName === 'h3') {
+                // Toggle between font weights 900 and 700
+                if (currentFontWeight === '900') {
+                    nestedElement.style.fontWeight = 500;
+                    item.dataset.fontWeight = '';
+                } else {
+                    nestedElement.style.fontWeight = 900;
+                    item.dataset.fontWeight = '900';
+                }
+            } else {
+                // For other elements, toggle between bold (700) and regular (400)
+                if (currentFontWeight === 'bold') {
+                    nestedElement.style.fontWeight = 400;
+                    item.dataset.fontWeight = '';
+                } else {
+                    nestedElement.style.fontWeight = 'bold';
+                    item.dataset.fontWeight = 'bold';
+                }
+            }
+
+            // Store the initial font weight if it's not already set
+            if (!item.dataset.initialFontWeight) {
+                item.dataset.initialFontWeight = initialFontWeight;
+            }
+        }
+    }
+}
+
+// Function to open the color input for selecting background color
+function openColorInput(triggerElement) {
+
+    // List of predefined colors (customize as needed)
+    const predefinedColors = ["#ffffff", "#e3eeff", "#bbbdbf", "#baf5ef"];
+
+    // Create a new input element of type "color"
+    var colorInput = document.createElement("input");
+    colorInput.type = "color";
+
+    // Create a datalist element to contain the predefined colors
+    var colorList = document.createElement("datalist");
+    colorList.id = "colorList";
+
+    // Add the predefined colors to the datalist
+    for (var i = 0; i < predefinedColors.length; i++) {
+        var option = document.createElement("option");
+        option.value = predefinedColors[i];
+        colorList.appendChild(option);
+    }
+
+    // Append the datalist to the document body
+    document.body.appendChild(colorList);
+
+    // Set the list attribute of the color input to the id of the datalist
+    colorInput.setAttribute("list", "colorList");
+
+    // Add an event listener to listen for color change events
+    colorInput.addEventListener("change", function (event) {
+        // Set the selected color as the background color of the trigger element
+        // triggerElement.style.backgroundColor = event.target.value;
+
+        var item = triggerElement.closest(".item");
+        if (item) {
+            item.style.backgroundColor = event.target.value;
+        }
+
+        // Remove the color input and datalist from the DOM after color selection
+        colorInput.remove();
+        colorList.remove();
+    });
+
+    // Append the color input to the document body
+    document.body.appendChild(colorInput);
+
+    // Trigger a click event on the color input to open the color picker dialog
+    colorInput.click();
+
 }
 
 // Function to create an HTML element from a string
@@ -236,7 +344,7 @@ function addHTMLToGrid(row, col, htmlCode) {
     }
     var rowGrid = document.getElementById("form-fields").getElementsByClassName("rowGrid")[row - 1];
     var colGrid = rowGrid.getElementsByClassName('item')[col - 1];
-    colGrid.innerHTML = htmlCode + '<div class="delete-button" onclick="deleteCell(this)">X</div>';
+    colGrid.innerHTML = htmlCode + '<div class="bold-button" onclick="toggleFontWeight(this)">B</div>' + '<div class="color-button" onclick="openColorInput(this)"></div>' + '<div class="delete-button" onclick="deleteCell(this)">X</div>';
     // Remove highlighted-item class from the selected cell
     colGrid.classList.remove('highlighted-item');
 }
@@ -302,7 +410,7 @@ document.addEventListener('dragend', dragEnd);
 
 function generateModalBody(buttonType, properties){
     var modalBodyHTML = "";
-    types = ["color", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number",
+    types = ["checkbox", "color", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number",
                 "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week"];
     // Generate modal body HTML
     for (var i = 0; i < properties.length; i++) {
