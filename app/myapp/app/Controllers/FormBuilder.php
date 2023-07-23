@@ -100,10 +100,14 @@ class FormBuilder extends BaseController
 
         // instantiate and use the dompdf class
         $dompdf = new Dompdf();
+        $options = new \Dompdf\Options();
+        $options->setIsRemoteEnabled(true);
+        $dompdf->setOptions($options);
+
         $dompdf->loadHtml(view('FormBuilder/form_export', $data));
 
         // (Optional) Setup the paper size and orientation
-        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->setPaper('A4', 'portrait');
 
         // Render the HTML as PDF
         $dompdf->render();

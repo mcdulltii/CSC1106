@@ -381,6 +381,8 @@ function detectRowChange(sel) {
 }
 
 function detectColChange(column) {
+    removeGridHighlight();
+
     // Remove default col option
     $('#default-col').remove();
     // Get row and column number
