@@ -2,13 +2,6 @@
 
 <?= $this->section('body') ?>
 <div class="grid-container" id="form-builder">
-    <datalist id="colorList">
-        <option>#ffffff</option>
-        <option>#e3eeff</option>
-        <option>#bbbdbf</option>
-        <option>#baf5ef</option>
-        <!-- Add more predefined colors as needed -->
-    </datalist>
     <div id="form-fields" class="item3">
         <div class="rowGrid plus-button-container">
             <div class="plus-button" onclick="addNewRow()">+</div>
@@ -286,45 +279,55 @@ function toggleFontWeight(triggerElement) {
     }
 }
 
+// Function to open the color input for selecting background color
 function openColorInput(triggerElement) {
-    // Get the color input element
-    var colorInput = document.querySelector("input[type='color']");
 
-    // Position the color input relative to the trigger element
-    var topPosition = 0;
-    var leftPosition = 0;
-    var currentElement = triggerElement;
-    while (currentElement) {
-        topPosition += currentElement.offsetTop;
-        leftPosition += currentElement.offsetLeft;
-        currentElement = currentElement.offsetParent;
+    // List of predefined colors (customize as needed)
+    const predefinedColors = ["#ffffff", "#e3eeff", "#bbbdbf", "#baf5ef"];
+
+    // Create a new input element of type "color"
+    var colorInput = document.createElement("input");
+    colorInput.type = "color";
+
+    // Create a datalist element to contain the predefined colors
+    var colorList = document.createElement("datalist");
+    colorList.id = "colorList";
+
+    // Add the predefined colors to the datalist
+    for (var i = 0; i < predefinedColors.length; i++) {
+        var option = document.createElement("option");
+        option.value = predefinedColors[i];
+        colorList.appendChild(option);
     }
 
-    colorInput.style.position = "absolute";
-    colorInput.style.top = topPosition + "px";
-    colorInput.style.left = leftPosition + "px";
-    colorInput.style.zIndex = "9999"; // Set a higher z-index to ensure the color picker appears on top
+    // Append the datalist to the document body
+    document.body.appendChild(colorList);
+
+    // Set the list attribute of the color input to the id of the datalist
+    colorInput.setAttribute("list", "colorList");
 
     // Add an event listener to listen for color change events
     colorInput.addEventListener("change", function (event) {
         // Set the selected color as the background color of the trigger element
-        triggerElement.style.backgroundColor = event.target.value;
+        // triggerElement.style.backgroundColor = event.target.value;
 
-        // If triggerElement is an ".item" element, change its background color
         var item = triggerElement.closest(".item");
         if (item) {
             item.style.backgroundColor = event.target.value;
         }
 
-        // Hide the color input after color selection
-        colorInput.style.display = "none";
+        // Remove the color input and datalist from the DOM after color selection
+        colorInput.remove();
+        colorList.remove();
     });
 
-    // Show the color input when the function is called
-    colorInput.style.display = "block";
+    // Append the color input to the document body
+    document.body.appendChild(colorInput);
+
+    // Trigger a click event on the color input to open the color picker dialog
+    colorInput.click();
+
 }
-
-
 
 // Function to create an HTML element from a string
 function createFragment(htmlStr) {
