@@ -22,21 +22,26 @@ class LoginController extends BaseController
 
         // Checks whether the submitted data passed the validation rules.
         if (!$this->validateData($post, [
-            'username' => 'required',
-            'password' => 'required',
+            'username' => 'required|min_length[8]|max_length[255]',
+            'password' => 'required|min_length[8]|max_length[255]',
         ])) {
             // The validation fails, so returns the form.
             return view('login');
         }
 
-        if (password_verify($post['password'], $model->getUserPasswordHash($post['username'])))
-        {
-            $session = \Config\Services::session();
-            // Set the user ID
-            $session->set('user_id', $model->getUserID($post['username']));
+        try {
+            if (password_verify($post['password'], $model->getUserPasswordHash($post['username'])))
+            {
+                $session = \Config\Services::session();
+                // Set the user ID
+                $session->set('user_id', $model->getUserID($post['username']));
 
-            return redirect('/', 'refresh');
-        } else {
+                return redirect('/', 'refresh');
+            } else {
+                // The validation fails, so returns the form.
+                return view('login');
+            }
+        } catch (\Exception $e) {
             // The validation fails, so returns the form.
             return view('login');
         }

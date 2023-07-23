@@ -1,34 +1,39 @@
 <?= $this->extend('layout/bootstrap') ?>
 
 <?= $this->section('body') ?>
-<!-- Registration Section-->
+<!-- Login Section-->
 <section class="vh-100">
     <div class="container py-5 h-100">
         <div class="row d-flex align-items-center justify-content-center h-100">
+            <div class="col-md-8 col-lg-7 col-xl-6">
+                <img src="https://media.istockphoto.com/id/913685766/vector/clipboard-with-checklist.jpg?s=612x612&w=0&k=20&c=J5NuNqbu4cIz4HwKG8qc_Y_b6mUPwILzazJF1PqqFGM=" class="img-fluid" alt="Phone image">
+            </div>
             <?= session()->getFlashdata('error') ?>
-            <form action="<?php echo base_url(); ?>login" method="post">
-                <?= csrf_field() ?>
-                <h5> Login existing user: </h5>
+            <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+                <form action="<?php echo base_url(); ?>login" method="post">
+                    <?= csrf_field() ?>
+                    <h5> Login existing user: </h5>
 
-                <!-- Username input -->
-                <div class="form-outline mb-4">
-                    <input type="text" id="username" name="username" class="form-control" value="<?= set_value('username') ?>" />
-                    <label class="form-label" for="username">Username</label>
-                </div>
+                    <!-- Username input -->
+                    <div class="form-outline mb-4">
+                        <input type="text" id="username" name="username" class="form-control" value="<?= set_value('username') ?>" />
+                        <label class="form-label" for="username">Username</label>
+                    </div>
 
-                <!-- Password input -->
-                <div class="form-outline mb-4">
-                    <input type="password" id="password" name="password" class="form-control" value="<?= set_value('password') ?>" />
-                    <label class="form-label" for="password">Password</label>
-                </div>
+                    <!-- Password input -->
+                    <div class="form-outline mb-4">
+                        <input type="password" id="password" name="password" class="form-control" value="<?= set_value('password') ?>" />
+                        <label class="form-label" for="password">Password</label>
+                    </div>
 
-                <?= validation_list_errors(); ?>
+                    <?= validation_list_errors(); ?>
 
-                <!-- Submit button -->
-                <div class="form-check d-flex justify-content-center mb-4">
-                    <button type="submit" class="btn btn-primary btn-block mb-3">Login</button>
-                </div>
-            </form>
+                    <!-- Submit button -->
+                    <div class="d-flex justify-content-around align-items-center mb-4">
+                        <button type="submit" class="btn btn-primary btn-block mb-3">Login</button>
+                    </div>
+                </form>
+            </div>
         </div>
 </section>
 <!-- About Section-->
