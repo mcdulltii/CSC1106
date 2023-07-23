@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use Dompdf\Dompdf;
 use Ramsey\Uuid\Uuid;
 
 use App\Controllers\BaseController;
@@ -77,6 +78,44 @@ class FormBuilder extends BaseController
         ];
 
         return view('FormBuilder/form_builder', $data);
+    }
+
+    public function exportForm($id)
+    {
+        // Set the form ID in the session so the form builder knows which form to load and update
+        $this->session->set('form_id', $id);
+
+        // Get the form from the database
+        $formModel = model(FormModel::class);
+        $form = $formModel->getForm($id);
+
+        $uncompressed_data = gzdecode($form['form_blob']);
+        $decrypted_data = $this->encrypter->decrypt($uncompressed_data);
+
+        $data = [
+            'form' => $decrypted_data,
+        ];
+
+        if (! $this->request->is('post')) {
+            return view('FormBuilder/form_export', $data);
+        }
+
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+        $options = new \Dompdf\Options();
+        $options->setIsRemoteEnabled(true);
+        $dompdf->setOptions($options);
+
+        $dompdf->loadHtml(view('FormBuilder/form_export', $data));
+
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream();
     }
 
     public function deleteForm($id)
