@@ -230,8 +230,8 @@ $(document).ready(function () {
         }
 
         // Create a new table element
-        var table = document.createElement("table");
-        table.style.borderCollapse = "collapse";
+        var table = document.createElement("div");
+        table.classList.add("table");
 
         // Iterate through each rowGrid element to create table rows (tr)
         var rowGrids = tempDiv.getElementsByClassName("rowGrid");
@@ -239,7 +239,8 @@ $(document).ready(function () {
             var rowGrid = rowGrids[i];
 
             // Create a new table row (tr) for each rowGrid
-            var tableRow = document.createElement("tr");
+            var tableRow = document.createElement("div");
+            tableRow.classList.add("row")
 
             // Iterate through each item in the rowGrid to create table cells (td)
             var items = rowGrid.getElementsByClassName("item");
@@ -247,7 +248,8 @@ $(document).ready(function () {
                 var item = items[j];
 
                 // Create a new table cell (td) for each item
-                var tableCell = document.createElement("td");
+                var tableCell = document.createElement("div");
+                tableCell.classList.add("col");
                 // Move the content of the item into the table cell
                 while (item.firstChild) {
                     tableCell.appendChild(item.firstChild);
@@ -265,9 +267,12 @@ $(document).ready(function () {
         // Get the modified grid content with the table structure
         var modifiedGridContent = table.outerHTML;
 
-
+        // var style = '<style>table {font-family: arial, sans-serif;width: 100%;border: none;}td {text-align: center;border: 1px solid #ccc;padding: 10px;height: 60px;width: 60px;}</style>'
+        // var style = '<style>.col{text-align: center;}.col label {display: inline-block;margin-right: 1px;text-align: center;}.col input {display: inline-block;margin: 0px;width: 100px; height:25px;}</style>'
+        var style = '<style>.col{text-align: center;box-sizing: border-box;border: 0.5px solid #ccc;}.col label {text-align: left; font-size:8px}.col input {margin: 0px;width: 100px; height:25px;border:0px;}</style>'
         // Wrap the content and generate the PDF
-        var wrap = "<div style='font-size:12px; border:0px solid; background-color: #FFFFFF; padding: 05px 15px; width:600px;'>" + modifiedGridContent + "</div>";
+        var wrap = "<div style='font-size:12px; border:0px solid; background-color: #FFFFFF; padding: 05px 15px; width:570px;'>" + "<div>" + style + modifiedGridContent + "</div></div>";
+        // var wrap = "<div style='font-size:12px; border:0px solid; background-color: #FFFFFF; padding: 05px 15px; width:600px;'>" + modifiedGridContent + "</div>";
         console.log(wrap);
         
         // Create a new jsPDF instance
